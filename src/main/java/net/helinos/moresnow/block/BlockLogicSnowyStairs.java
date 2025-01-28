@@ -1,11 +1,12 @@
 package net.helinos.moresnow.block;
 
 import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockStairs;
+import net.minecraft.core.block.BlockLogic;
+import net.minecraft.core.block.BlockLogicStairs;
+import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
-import net.minecraft.core.world.WorldSource;
 import net.minecraft.core.world.chunk.Chunk;
 
 import java.util.ArrayList;
@@ -15,25 +16,24 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-public class BlockSnowyStairs extends BlockSnowy {
-	public BlockSnowyStairs(String key, int id, Material material, Class<BlockStairs> block,
+public class BlockLogicSnowyStairs<T extends BlockLogic> extends BlockLogicSnowy<T> {
+	public BlockLogicSnowyStairs(Block<T> block, Class<BlockLogicStairs> blockLogic,
 			int[] excludedIds) {
-		super(key, id, material, block, excludedIds, true, true, true);
-		this.withLightBlock(255);
+		super(block, Material.snow, blockLogic, excludedIds, true, true);
 		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	@Override
-	protected Map<Integer, Integer> initMetadataToBlockId(Class<?> block, int[] excludedIds) {
+	protected Map<Integer, Integer> initMetadataToBlockId(Class<?> blockLogic, int[] excludedIds) {
 		Hashtable<Integer, Integer> tmp = new Hashtable<>();
-		for (Block b : Block.blocksList) {
+		for (Block<?> b : Blocks.blocksList) {
 			if (this.metadataID == 16) {
 				break;
 			}
 			if (b == null)
 				continue;
-			int id = b.id;
-			if (!block.isInstance(b) || ArrayUtils.contains(excludedIds, id))
+			int id = b.id();
+			if (!blockLogic.isInstance(b.getLogic()) || ArrayUtils.contains(excludedIds, id))
 				continue;
 			tmp.put(this.metadataID++, id);
 		}
@@ -54,9 +54,9 @@ public class BlockSnowyStairs extends BlockSnowy {
 		if (!this.canReplaceBlock(id, meta))
 			return false;
 		if (world.getBlockId(x, y + 1, z) == 0) {
-			world.setBlockAndMetadataWithNotify(x, y + 1, z, MSBlocks.snowyPartial.id, meta << 2);
+			world.setBlockAndMetadataWithNotify(x, y + 1, z, MSBlocks.SNOWY_PARTIAL.id(), meta << 2);
 		}
-		return world.setBlockAndMetadataWithNotify(x, y, z, this.id, this.blockToMetadata(id, meta));
+		return world.setBlockAndMetadataWithNotify(x, y, z, this.id(), this.blockToMetadata(id, meta));
 	}
 
 	@Override
@@ -64,9 +64,9 @@ public class BlockSnowyStairs extends BlockSnowy {
 		if (!this.canReplaceBlock(id, meta))
 			return false;
 		if (chunk.getBlockID(x, y + 1, z) == 0) {
-			chunk.setBlockIDWithMetadata(x, y + 1, z, MSBlocks.snowyPartial.id, meta << 2);
+			chunk.setBlockIDWithMetadata(x, y + 1, z, MSBlocks.SNOWY_PARTIAL.id(), meta << 2);
 		}
-		return chunk.setBlockIDWithMetadata(x, y, z, this.id, this.blockToMetadata(id, meta));
+		return chunk.setBlockIDWithMetadata(x, y, z, this.block.id(), this.blockToMetadata(id, meta));
 	}
 
 	@Override
@@ -75,21 +75,10 @@ public class BlockSnowyStairs extends BlockSnowy {
 		int blockIdAbove = world.getBlockId(x, y + 1, z);
 
 		if (blockIdAbove == 0) {
-			world.setBlockAndMetadata(x, y, z, MSBlocks.snowyPartial.id, metadata & 0b1111);
+			world.setBlockAndMetadata(x, y, z, MSBlocks.SNOWY_PARTIAL.id(), metadata & 0b1111);
 		}
 
 		super.accumulate(world, x, y, z);
-	}
-
-	@Override
-	public AABB getCollisionBoundingBoxFromPool(WorldSource world, int x, int y, int z) {
-		return AABB.getBoundingBoxFromPool(x + this.minX, y + this.minY, z + this.minZ, x + this.maxX, y + this.maxY,
-				z + this.maxZ);
-	}
-
-	@Override
-	public void setBlockBoundsBasedOnState(WorldSource world, int x, int y, int z) {
-		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	@Override
@@ -100,34 +89,26 @@ public class BlockSnowyStairs extends BlockSnowy {
 		int layers = this.getLayers(metadata);
 		float heightFromSnow = (layers) * 2 / 16.0f;
 		if (rotation == 0) {
-			this.setBlockBounds(0.0f, 0.0f, 0.0f, 0.5f, 0.5f + heightFromSnow, 1.0f);
-			super.getCollidingBoundingBoxes(world, x, y, z, aabb, aabbList);
-			this.setBlockBounds(0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-			super.getCollidingBoundingBoxes(world, x, y, z, aabb, aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 0.5f, 0.5f + heightFromSnow, 1.0f), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f), aabbList);
 		} else if (rotation == 1) {
-			this.setBlockBounds(0.0f, 0.0f, 0.0f, 0.5f, 1.0f, 1.0f);
-			super.getCollidingBoundingBoxes(world, x, y, z, aabb, aabbList);
-			this.setBlockBounds(0.5f, 0.0f, 0.0f, 1.0f, 0.5f + heightFromSnow, 1.0f);
-			super.getCollidingBoundingBoxes(world, x, y, z, aabb, aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 0.5f, 1.0f, 1.0f), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.5f, 0.0f, 0.0f, 1.0f, 0.5f + heightFromSnow, 1.0f), aabbList);
 		} else if (rotation == 2) {
-			this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 0.5f + heightFromSnow, 0.5f);
-			super.getCollidingBoundingBoxes(world, x, y, z, aabb, aabbList);
-			this.setBlockBounds(0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 1.0f);
-			super.getCollidingBoundingBoxes(world, x, y, z, aabb, aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 1.0f, 0.5f + heightFromSnow, 0.5f), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 1.0f), aabbList);
 		} else {
-			this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f);
-			super.getCollidingBoundingBoxes(world, x, y, z, aabb, aabbList);
-			this.setBlockBounds(0.0f, 0.0f, 0.5f, 1.0f, 0.5f + heightFromSnow, 1.0f);
-			super.getCollidingBoundingBoxes(world, x, y, z, aabb, aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.5f, 1.0f, 0.5f + heightFromSnow, 1.0f), aabbList);
 		}
 	}
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
-		Block blockAbove = world.getBlock(x, y + 1, z);
+		Block<?> blockAbove = world.getBlock(x, y + 1, z);
 		int metadata = world.getBlockMetadata(x, y, z);
-		if (blockAbove instanceof BlockSnowyPartial) {
-			BlockSnowyPartial blockSnowyPartial = (BlockSnowyPartial) blockAbove;
+		if (blockAbove != null && blockAbove.getLogic() instanceof BlockLogicSnowyPartial) {
+			BlockLogicSnowyPartial<?> blockSnowyPartial = (BlockLogicSnowyPartial<?>) blockAbove.getLogic();
 			int aboveMetadata = world.getBlockMetadata(x, y + 1, z);
 			int aboveLayers = blockSnowyPartial.getLayers(aboveMetadata);
 
@@ -149,5 +130,15 @@ public class BlockSnowyStairs extends BlockSnowy {
 
 	public int getRotation(int metadata) {
 		return (metadata >> 2) & 0b11;
+	}
+
+	@Override
+	public boolean isSolidRender() {
+		return false;
+	}
+  
+	@Override
+	public boolean isCubeShaped() {
+		return false;
 	}
 }

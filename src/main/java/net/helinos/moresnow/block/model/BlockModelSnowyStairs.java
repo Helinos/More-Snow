@@ -1,15 +1,17 @@
 package net.helinos.moresnow.block.model;
 
-import net.helinos.moresnow.block.BlockSnowyStairs;
-import net.minecraft.client.render.stitcher.IconCoordinate;
-import net.minecraft.client.render.stitcher.TextureRegistry;
+import net.helinos.moresnow.block.BlockLogicSnowyStairs;
+import net.minecraft.client.render.texture.stitcher.IconCoordinate;
+import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.block.Block;
+import net.minecraft.core.block.BlockLogic;
+import net.minecraft.core.util.phys.AABB;
 
-public class BlockModelSnowyStairs extends BlockModelSnowy<BlockSnowyStairs> {
+public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy<T> {
     public static final IconCoordinate SNOW_TEXTURE = TextureRegistry.getTexture("minecraft:block/block_snow");
 
-    public BlockModelSnowyStairs(Block block) {
+    public BlockModelSnowyStairs(Block<T> block) {
         super(block);
     }
 
@@ -19,52 +21,53 @@ public class BlockModelSnowyStairs extends BlockModelSnowy<BlockSnowyStairs> {
 
         // Render the stairs
         boolean somethingRendered = false;
-        int horizontalRotation = this.block.getRotation(metadata);
+        BlockLogicSnowyStairs<?> logic = (BlockLogicSnowyStairs<?>) this.block.getLogic();
+        int horizontalRotation = logic.getRotation(metadata);
 
+        AABB bounds = AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
         if (horizontalRotation == 0) {
-            this.block.setBlockBounds(0.0, 0.0, 0.0, 0.5, 0.5, 1.0);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
-            this.block.setBlockBounds(0.5, 0.0, 0.0, 1.0, 1.0, 1.0);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
+            bounds.set(0.0, 0.0, 0.0, 0.5, 0.5, 1.0);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
+            bounds.set(0.5, 0.0, 0.0, 1.0, 1.0, 1.0);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
         } else if (horizontalRotation == 1) {
-            this.block.setBlockBounds(0.0, 0.0, 0.0, 0.5, 1.0, 1.0);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
-            this.block.setBlockBounds(0.5, 0.0, 0.0, 1.0, 0.5, 1.0);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
+            bounds.set(0.0, 0.0, 0.0, 0.5, 1.0, 1.0);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
+            bounds.set(0.5, 0.0, 0.0, 1.0, 0.5, 1.0);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
         } else if (horizontalRotation == 2) {
-            this.block.setBlockBounds(0.0, 0.0, 0.0, 1.0, 0.5, 0.5);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
-            this.block.setBlockBounds(0.0, 0.0, 0.5, 1.0, 1.0, 1.0);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
+            bounds.set(0.0, 0.0, 0.0, 1.0, 0.5, 0.5);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
+            bounds.set(0.0, 0.0, 0.5, 1.0, 1.0, 1.0);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
         } else {
-            this.block.setBlockBounds(0.0, 0.0, 0.0, 1.0, 1.0, 0.5);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
-            this.block.setBlockBounds(0.0, 0.0, 0.5, 1.0, 0.5, 1.0);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
+            bounds.set(0.0, 0.0, 0.0, 1.0, 1.0, 0.5);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
+            bounds.set(0.0, 0.0, 0.5, 1.0, 0.5, 1.0);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
         }
 
         // Render the snow
         renderBlocks.overrideBlockTexture = SNOW_TEXTURE;
-        int layers = this.block.getLayers(metadata);
+        int layers = logic.getLayers(metadata);
         float heightFromSnow = (layers + 1) * 2 / 16.0f;
 
         // Render the snow
         if (horizontalRotation == 0) {
-            this.block.setBlockBounds(0.0, 0.5, 0.0, 0.5, 0.5 + heightFromSnow, 1.0);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
+            bounds.set(0.0, 0.5, 0.0, 0.5, 0.5 + heightFromSnow, 1.0);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
         } else if (horizontalRotation == 1) {
-            this.block.setBlockBounds(0.5, 0.5, 0.0, 1.0, 0.5 + heightFromSnow, 1.0);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
+            bounds.set(0.5, 0.5, 0.0, 1.0, 0.5 + heightFromSnow, 1.0);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
         } else if (horizontalRotation == 2) {
-            this.block.setBlockBounds(0.0, 0.5, 0.0, 1.0, 0.5 + heightFromSnow, 0.5);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
+            bounds.set(0.0, 0.5, 0.0, 1.0, 0.5 + heightFromSnow, 0.5);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
         } else {
-            this.block.setBlockBounds(0.0, 0.5, 0.5, 1.0, 0.5 + heightFromSnow, 1.0);
-            somethingRendered |= this.renderStandardBlock(tessellator, this.block, x, y, z);
+            bounds.set(0.0, 0.5, 0.5, 1.0, 0.5 + heightFromSnow, 1.0);
+            somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
         }
         renderBlocks.overrideBlockTexture = null;
 
-        this.block.setBlockBounds(0.0, 0.0, 0.0, 1.0, 1.0 + heightFromSnow, 1.0);
         return somethingRendered;
     }
 }

@@ -1,18 +1,19 @@
 package net.helinos.moresnow.block;
 
 import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockStairs;
-import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.BlockLogic;
+import net.minecraft.core.block.BlockLogicStairs;
+import net.minecraft.core.block.Blocks;
 
-public class BlockSnowyStairsPainted extends BlockSnowyStairs {
-	public BlockSnowyStairsPainted(String key, int id, Material material, Class<BlockStairs> block,
+public class BlockLogicSnowyStairsPainted<T extends BlockLogic> extends BlockLogicSnowyStairs<T> {
+	public BlockLogicSnowyStairsPainted(Block<T> block, Class<BlockLogicStairs> blockLogic,
 			int[] excludedIds) {
-		super(key, id, material, block, excludedIds);
+		super(block, blockLogic, excludedIds);
 	}
 
 	@Override
 	public int getStoredBlockId(int metadata) {
-		return Block.stairsPlanksOakPainted.id;
+		return Blocks.STAIRS_PLANKS_PAINTED.id();
 	}
 
 	@Override

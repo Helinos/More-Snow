@@ -1,11 +1,12 @@
 package net.helinos.moresnow.mixin;
 
-import net.helinos.moresnow.block.BlockSnowy;
+import net.helinos.moresnow.block.BlockLogicSnowy;
 import net.helinos.moresnow.block.MSBlocks;
 import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockLayerSnow;
-import net.minecraft.core.block.BlockSlab;
-import net.minecraft.core.block.BlockStairs;
+import net.minecraft.core.block.BlockLogicLayerSnow;
+import net.minecraft.core.block.BlockLogicSlab;
+import net.minecraft.core.block.BlockLogicStairs;
+import net.minecraft.core.block.Blocks;
 import net.minecraft.core.world.World;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,8 +14,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(value = BlockLayerSnow.class, remap = false)
-public abstract class BlockLayerSnowMixin {
+@Mixin(value = BlockLogicLayerSnow.class, remap = false)
+public abstract class BlockLogicLayerSnowMixin {
 	@Redirect(method = "accumulate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockId(III)I", ordinal = 0))
 	private int blockId1(World world, int x, int y, int z) {
 		return accountForSnowy(world, x, y, z);
@@ -60,7 +61,7 @@ public abstract class BlockLayerSnowMixin {
 		int id = world.getBlockId(x, y, z);
 
 		if (ArrayUtils.contains(MSBlocks.blockIds, id)) {
-			return Block.layerSnow.id;
+			return Blocks.LAYER_SNOW.id();
 		}
 
 		return id;
@@ -68,11 +69,11 @@ public abstract class BlockLayerSnowMixin {
 
 	@Unique
 	private int getLayers(World world, int x, int y, int z) {
-		Block block = world.getBlock(x, y, z);
+		Block<?> block = world.getBlock(x, y, z);
 		int metadata = world.getBlockMetadata(x, y, z);
 
-		if (block instanceof BlockSnowy) {
-			return ((BlockSnowy) block).getRelativeLayers(metadata);
+		if (block.getLogic() instanceof BlockLogicSnowy) {
+			return ((BlockLogicSnowy<?>) block.getLogic()).getRelativeLayers(metadata);
 		}
 
 		return metadata;
@@ -80,21 +81,21 @@ public abstract class BlockLayerSnowMixin {
 
 	@Redirect(method = "canPlaceBlockAt", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockId(III)I"))
 	private int topSlabAndUpsideDownStairsFix(World world, int x, int y, int z) {
-		Block block = world.getBlock(x, y, z);
+		Block<?> block = world.getBlock(x, y, z);
 
-		if (block instanceof BlockSlab) {
+		if (block != null && block.getLogic() instanceof BlockLogicSlab) {
 			int metadata = world.getBlockMetadata(x, y, z);
 			int slabState = metadata & 3;
 
 			if (slabState != 0) {
-				return Block.stone.id;
+				return Blocks.STONE.id();
 			}
-		} else if (block instanceof BlockStairs) {
+		} else if (block != null && block.getLogic() instanceof BlockLogicStairs) {
 			int metadata = world.getBlockMetadata(x, y, z);
 			int stairsState = metadata & 8;
 
 			if (stairsState != 0) {
-				return Block.stone.id;
+				return Blocks.STONE.id();
 			}
 		}
 

@@ -1,8 +1,9 @@
 package net.helinos.moresnow.mixin;
 
-import net.helinos.moresnow.block.BlockSnowy;
+import net.helinos.moresnow.block.BlockLogicSnowy;
 import net.helinos.moresnow.block.MSBlocks;
 import net.minecraft.core.block.Block;
+import net.minecraft.core.block.Blocks;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.weather.Weather;
@@ -22,10 +23,10 @@ public class WeatherMixin {
 		int y = world.getHeightValue(x, z);
 		for (int i = 0; i < 2; i++) {
 			y -= i;
-			Block block = world.getBlock(x, y, z);
+			Block<?> block = world.getBlock(x, y, z);
 
-			if (!world.getBlockBiome(x, y, z).hasSurfaceSnow() && block instanceof BlockSnowy) {
-				BlockSnowy blockSnowy = (BlockSnowy) block;
+			if (block != null && !world.getBlockBiome(x, y, z).hasSurfaceSnow() && block.getLogic() instanceof BlockLogicSnowy) {
+				BlockLogicSnowy<?> blockSnowy = (BlockLogicSnowy<?>) block.getLogic();
 				int metadata = world.getBlockMetadata(x, y, z);
 				int layers = blockSnowy.getLayers(metadata);
 
@@ -42,19 +43,19 @@ public class WeatherMixin {
 	@Inject(method = "doChunkLoadEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/chunk/Chunk;getBlockID(III)I", shift = At.Shift.AFTER, ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void doChunkLoadEffect(World world, Chunk chunk, CallbackInfo callbackInfo, int x, int z, int y, int blockId) {
 		if (!world.getBlockBiome(chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z).hasSurfaceSnow()) {
-			Block block = Block.getBlock(blockId);
+			Block<?> block = Blocks.getBlock(blockId);
 
 			if (ArrayUtils.contains(MSBlocks.transparentIds, blockId)) {
-				BlockSnowy blockSnowy = (BlockSnowy) block;
+				BlockLogicSnowy<?> blockSnowy = (BlockLogicSnowy<?>) block.getLogic();
 				int metadata = chunk.getBlockMetadata(x, y, z);
 				blockSnowy.removeSnow(chunk, metadata, x, y, z);
 			}
 
 			int blockBelowId = chunk.getBlockID(x, y - 1, z);
-			block = Block.getBlock(blockBelowId);
+			block = Blocks.getBlock(blockBelowId);
 
-			if (ArrayUtils.contains(MSBlocks.solidIds, blockBelowId) && !(blockId == Block.layerSnow.id)) {
-				BlockSnowy blockSnowy = (BlockSnowy) block;
+			if (ArrayUtils.contains(MSBlocks.solidIds, blockBelowId) && !(blockId == Blocks.LAYER_SNOW.id())) {
+				BlockLogicSnowy<?> blockSnowy = (BlockLogicSnowy<?>) block.getLogic();
 				int metadata = chunk.getBlockMetadata(x, y - 1, z);
 				blockSnowy.removeSnow(chunk, metadata, x, y - 1, z);
 			}

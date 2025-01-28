@@ -1,23 +1,25 @@
 package net.helinos.moresnow.block.model;
 
-import net.helinos.moresnow.block.BlockSnowyPlant;
+import net.helinos.moresnow.block.BlockLogicSnowyPlant;
 import net.minecraft.client.render.LightmapHelper;
 import net.minecraft.client.render.block.color.BlockColorDispatcher;
 import net.minecraft.client.render.block.model.BlockModelDispatcher;
 import net.minecraft.client.render.block.model.BlockModelStandard;
-import net.minecraft.client.render.stitcher.IconCoordinate;
 import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.core.block.Block;
+import net.minecraft.core.block.BlockLogic;
+import net.minecraft.core.block.Blocks;
 import net.minecraft.core.util.helper.Side;
 
-public class BlockModelSnowyPlant extends BlockModelStandard<BlockSnowyPlant> {
-    public BlockModelSnowyPlant(Block block) {
+public class BlockModelSnowyPlant<T extends BlockLogic> extends BlockModelStandard<T> {
+    public BlockModelSnowyPlant(Block<T> block) {
         super(block);
     }
 
     @Override
     public boolean render(Tessellator tessellator, int x, int y, int z) {
-        this.block.setBlockBoundsBasedOnState(renderBlocks.blockAccess, x, y, z);
+        BlockLogicSnowyPlant<?> logic = (BlockLogicSnowyPlant<?>) this.block.getLogic();
 
         float blockBrightness = 1.0F;
         if (!LightmapHelper.isLightmapEnabled()) {
@@ -36,11 +38,11 @@ public class BlockModelSnowyPlant extends BlockModelStandard<BlockSnowyPlant> {
         double renderY = y;
         double renderZ = z;
         int metadata = renderBlocks.blockAccess.getBlockMetadata(x, y, z);
-        int storedBlockID = this.block.getStoredBlockId(metadata);
-        Block storedBlock = Block.getBlock(storedBlockID);
+        int storedBlockID = logic.getStoredBlockId(metadata);
+        Block<?> storedBlock = Blocks.getBlock(storedBlockID);
 
         // Random offset based on coordinates
-        if (storedBlock == Block.tallgrass || storedBlock == Block.tallgrassFern || storedBlock == Block.spinifex) {
+        if (storedBlock == Blocks.TALLGRASS || storedBlock == Blocks.TALLGRASS_FERN || storedBlock == Blocks.SPINIFEX) {
             long hashValue = (x * 3129871) ^ z * 116129781 ^ y;
             hashValue = hashValue * hashValue * 42317861 + hashValue * 11;
 

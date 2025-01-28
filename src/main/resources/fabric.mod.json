@@ -16,13 +16,16 @@
   "entrypoints": {
     "main": [
       "net.helinos.moresnow.MoreSnow"
+    ],
+    "afterGameStart": [
+      "net.helinos.moresnow.MoreSnow"
     ]
   },
   "mixins": [
     "moresnow.mixins.json"
   ],
   "depends": {
-    "minecraft": "*",
+    "minecraft": "^7.3",
     "fabricloader": ">=0.15.5"
   },
   "suggests": {}

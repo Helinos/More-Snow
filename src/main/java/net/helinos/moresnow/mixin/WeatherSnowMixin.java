@@ -1,11 +1,12 @@
 package net.helinos.moresnow.mixin;
 
 import net.helinos.moresnow.MoreSnow;
-import net.helinos.moresnow.block.BlockSnowy;
+import net.helinos.moresnow.block.BlockLogicSnowy;
 import net.helinos.moresnow.block.MSBlocks;
 import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockFence;
-import net.minecraft.core.block.BlockLayerSnow;
+import net.minecraft.core.block.BlockLogicFence;
+import net.minecraft.core.block.BlockLogicLayerSnow;
+import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.enums.LightLayer;
 import net.minecraft.core.util.helper.Direction;
@@ -33,7 +34,7 @@ public abstract class WeatherSnowMixin {
 	@Unique
 	private static int metadataToStore = 0;
 	@Unique
-	private static BlockSnowy snowCoverType = null;
+	private static BlockLogicSnowy<?> snowCoverType = null;
 
 	@ModifyVariable(method = "doEnvironmentUpdate", at = @At("STORE"), ordinal = 0)
 	private boolean snow(boolean snow) {
@@ -53,9 +54,9 @@ public abstract class WeatherSnowMixin {
 
 		for (testY = world.getHeightBlocks() - 1; testY > 0; --testY) {
 			int id = chunk.getBlockID(chunkX, testY, chunkZ);
-			Block block = Block.blocksList[id];
-			Material material = id != 0 ? block.blockMaterial : Material.air;
-			if ((material.blocksMotion() && !(block instanceof BlockFence)) || material.isLiquid()) {
+			Block<?> block = Blocks.blocksList[id];
+			Material material = id != 0 ? block.getMaterial() : Material.air;
+			if ((material.blocksMotion() && !(block.getLogic() instanceof BlockLogicFence)) || material.isLiquid()) {
 				y = testY + 1;
 				break;
 			}
@@ -67,7 +68,7 @@ public abstract class WeatherSnowMixin {
 
 		if ((MSBlocks.whichCanReplaceSolid(id, metadata) != null // Lower if block can be converted to snowy block
 				|| ArrayUtils.contains(MSBlocks.solidIds, id)) // Lower if block is snowy block for accumulate function
-				&& idAbove != Block.layerSnow.id) {
+				&& idAbove != Blocks.LAYER_SNOW.id()) {
 			return y - 1;
 		}
 
@@ -79,15 +80,15 @@ public abstract class WeatherSnowMixin {
 		int id = world.getBlockId(x, y, z);
 		if (!snowFell)
 			return id;
-		Block block = Block.getBlock(id);
+		Block<?> block = Blocks.getBlock(id);
 
-		if (block instanceof BlockSnowy) {
+		if (block != null && block.getLogic() instanceof BlockLogicSnowy) {
 			snowCoverHack = true;
-			return Block.layerSnow.id;
+			return Blocks.LAYER_SNOW.id();
 		}
 
 		int metadata = world.getBlockMetadata(x, y, z);
-		BlockSnowy blockSnowy = MSBlocks.whichCanReplace(id, metadata);
+		BlockLogicSnowy<?> blockSnowy = MSBlocks.whichCanReplace(id, metadata);
 
 		if (blockSnowy != null) {
 			snowCoverType = blockSnowy;
@@ -105,7 +106,7 @@ public abstract class WeatherSnowMixin {
 		int metadata = world.getBlockMetadata(x, y + 1, z);
 
 		if (MSBlocks.whichCanReplaceSolid(id, metadata) != null) {
-			return Block.stone.id;
+			return Blocks.STONE.id();
 		}
 
 		return world.getBlockId(x, y, z);
@@ -133,21 +134,21 @@ public abstract class WeatherSnowMixin {
 			return placed;
 		}
 
-		return world.setBlockWithNotify(x, y, z, Block.layerSnow.id);
+		return world.setBlockWithNotify(x, y, z, Blocks.LAYER_SNOW.id());
 	}
 
-	@Redirect(method = "doEnvironmentUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/block/BlockLayerSnow;accumulate(Lnet/minecraft/core/world/World;III)V"))
-	private void accumulate(BlockLayerSnow blockLayerSnow, World world, int x, int y, int z) {
+	@Redirect(method = "doEnvironmentUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/block/BlockLogicLayerSnow;accumulate(Lnet/minecraft/core/world/World;III)V"))
+	private void accumulate(BlockLogicLayerSnow blockLayerSnow, World world, int x, int y, int z) {
 		int layers;
 		int metadata = world.getBlockMetadata(x, y, z);
-		Block block = world.getBlock(x, y, z);
+		Block<?> block = world.getBlock(x, y, z);
 
 		boolean snowCoverHack = WeatherSnowMixin.snowCoverHack;
 		WeatherSnowMixin.snowCoverHack = false;
 
 		if (snowCoverHack) {
 			try {
-				layers = ((BlockSnowy) block).getRelativeLayers(metadata);
+				layers = ((BlockLogicSnowy<?>) block.getLogic()).getRelativeLayers(metadata);
 			} catch (ClassCastException ignored) {
 				MoreSnow.LOGGER.warn("snowCoverHack was true when it shouldn't have been");
 				snowCoverHack = false;
@@ -163,12 +164,12 @@ public abstract class WeatherSnowMixin {
 
 			int neighborId = world.getBlockId(neighborX, y, neighborZ);
 			int belowNeighborId = world.getBlockId(neighborX, y - 1, neighborZ);
-			Block neighborBlock = Block.getBlock(neighborId);
+			Block<?> neighborBlock = Blocks.getBlock(neighborId);
 
 			// If the neighboring block can support snow
-			if (Block.layerSnow.canPlaceBlockAt(world, x, y, z) && belowNeighborId != 0) {
+			if (Blocks.LAYER_SNOW.canPlaceBlockAt(world, x, y, z) && belowNeighborId != 0) {
 				if (neighborId == 0) {
-					world.setBlockWithNotify(x, y, z, Block.layerSnow.id);
+					world.setBlockWithNotify(x, y, z, Blocks.LAYER_SNOW.id());
 					return;
 				} else if (MSBlocks.tryMakeSnowyTransparent(world, neighborId, neighborX, y, neighborZ)) {
 					return;
@@ -181,20 +182,20 @@ public abstract class WeatherSnowMixin {
 			// Check if the neighboring block is a snow cover and get how many layers it has
 			int neighborMetadata = world.getBlockMetadata(neighborX, y, neighborZ);
 			int neighborLayers;
-			if (neighborBlock == Block.layerSnow) {
+			if (neighborBlock == Blocks.LAYER_SNOW) {
 				neighborLayers = neighborMetadata;
-			} else if (neighborBlock instanceof BlockSnowy) {
-				neighborLayers = ((BlockSnowy) neighborBlock).getRelativeLayers(neighborMetadata);
+			} else if (neighborBlock != null && neighborBlock.getLogic() instanceof BlockLogicSnowy) {
+				neighborLayers = ((BlockLogicSnowy<?>) neighborBlock.getLogic()).getRelativeLayers(neighborMetadata);
 			} else {
 				continue;
 			}
 
 			// Accumulate the neighbor if its snow is lower than this one
 			if (layers > neighborLayers) {
-				if (neighborBlock instanceof BlockLayerSnow) {
-					((BlockLayerSnow) neighborBlock).accumulate(world, neighborX, y, neighborZ);
-				} else if (neighborBlock instanceof BlockSnowy) {
-					((BlockSnowy) neighborBlock).accumulate(world, neighborX, y, neighborZ);
+				if (neighborBlock != null && neighborBlock.getLogic() instanceof BlockLogicLayerSnow) {
+					((BlockLogicLayerSnow) neighborBlock.getLogic()).accumulate(world, neighborX, y, neighborZ);
+				} else if (neighborBlock != null && neighborBlock.getLogic() instanceof BlockLogicSnowy) {
+					((BlockLogicSnowy<?>) neighborBlock.getLogic()).accumulate(world, neighborX, y, neighborZ);
 				}
 
 				return;
@@ -202,7 +203,7 @@ public abstract class WeatherSnowMixin {
 		}
 
 		if (snowCoverHack) {
-			((BlockSnowy) block).accumulate(world, x, y, z);
+			((BlockLogicSnowy<?>) block.getLogic()).accumulate(world, x, y, z);
 		} else {
 			blockLayerSnow.accumulate(world, x, y, z);
 		}

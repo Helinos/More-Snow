@@ -1,7 +1,7 @@
 package net.helinos.moresnow.mixin;
 
-import net.helinos.moresnow.block.BlockSnowy;
-import net.helinos.moresnow.block.BlockSnowyFence;
+import net.helinos.moresnow.block.BlockLogicSnowy;
+import net.helinos.moresnow.block.BlockLogicSnowyFence;
 import net.minecraft.client.render.block.model.BlockModelGrass;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.material.Material;
@@ -16,8 +16,8 @@ public class BlockModelGrassMixin {
 	private Material noSnowUnderSnowCoveredBlock(WorldSource blockAccess, int x, int y, int z) {
 		Material material = blockAccess.getBlockMaterial(x, y, z);
 		if (material == Material.snow) {
-			Block block = blockAccess.getBlock(x, y, z);
-			if (block instanceof BlockSnowy && !(block instanceof BlockSnowyFence)) {
+			Block<?> block = blockAccess.getBlock(x, y, z);
+			if (block.getLogic() instanceof BlockLogicSnowy && !(block.getLogic() instanceof BlockLogicSnowyFence)) {
 				return Material.stone;
 			}
 		}

@@ -3,17 +3,16 @@ package net.helinos.moresnow.block;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicSlab;
-import net.minecraft.core.block.material.Material;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.WorldSource;
 
+import java.util.List;
 import java.util.Map;
 
 public class BlockLogicSnowySlab<T extends BlockLogic, S extends BlockLogicSlab> extends BlockLogicSnowy<T>{
-	public BlockLogicSnowySlab(Block<T> block, Class<S> blockLogic,
-			int[] excludedIds) {
-		super(block, Material.snow, blockLogic, excludedIds, true, true);
-		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 0.625f, 1.0f);
+	public BlockLogicSnowySlab(Block<T> block, Class<S> blockLogic, List<Integer> excludedIds) {
+		super(block, blockLogic, excludedIds);
+		this.setBlockBounds(0.0, 0.0, 0.0, 1.0, 0.625, 1.0);
 	}
 
 	@Override
@@ -37,8 +36,8 @@ public class BlockLogicSnowySlab<T extends BlockLogic, S extends BlockLogicSlab>
 	public AABB getBlockBoundsFromState(WorldSource world, int x, int y, int z) {
 		int metadata = world.getBlockMetadata(x, y, z);
 		int layers = this.getLayers(metadata);
-		float height = (layers + 1) * 2 / 16.0f;
-		return AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 1.0f, 0.5f + height, 1.0f);
+		double height = layers * 2 / 16.0;
+		return AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, 0.5 + height, 1.0);
 	}
 
 	@Override
@@ -62,4 +61,19 @@ public class BlockLogicSnowySlab<T extends BlockLogic, S extends BlockLogicSlab>
 	public boolean isSolidRender() {
 		return false;
 	}
+
+	@Override
+	public boolean supportsOwnSnow() {
+		return true;
+	}
+
+	@Override
+	public int getMaxLayers() {
+		return 4;
+	};
+
+	@Override
+	public int getLowestLayerHeight() {
+		return 4;
+	};
 }

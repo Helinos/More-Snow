@@ -6,9 +6,8 @@ import net.minecraft.core.block.BlockLogicSlabPainted;
 import net.minecraft.core.block.Blocks;
 
 public class BlockLogicSnowySlabPainted<T extends BlockLogic> extends BlockLogicSnowySlab<T, BlockLogicSlabPainted> {
-	public BlockLogicSnowySlabPainted(Block<T> block, Class<BlockLogicSlabPainted> blockLogic,
-			int[] excludedIds) {
-		super(block, blockLogic, excludedIds);
+	public BlockLogicSnowySlabPainted(Block<T> block, Class<BlockLogicSlabPainted> blockLogic) {
+		super(block, blockLogic, null);
 	}
 
 	@Override

@@ -2,22 +2,14 @@ package net.helinos.moresnow.block;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
-import net.minecraft.core.block.material.Material;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
 
-import java.util.Map;
-
 public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnowy<T> {
 	public BlockLogicSnowyPartial(Block<T> block) {
-		super(block, Material.topSnow, null, new int[0], true, false);
+		super(block, null, null);
 		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 0.125f, 1.0f);
-	}
-
-	@Override
-	protected Map<Integer, Integer> initMetadataToBlockId(Class<?> block, int[] excludedIds) {
-		return null;
 	}
 
 	@Override
@@ -30,15 +22,15 @@ public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnow
 		int metadata = world.getBlockMetadata(x, y, z);
 		int rotation = this.getRotation(metadata);
 		int layers = this.getLayers(metadata);
-		float heightFromSnow = (layers + 1) * 2 / 16.0f;
+		double heightFromSnow = layers * 2 / 16.0;
 		if (rotation == 0) {
-			return AABB.getTemporaryBB(0.5f, 0.0f, 0.0f, 1.0f, heightFromSnow, 1.0f);
+			return AABB.getTemporaryBB(0.5, 0.0, 0.0, 1.0, heightFromSnow, 1.0);
 		} else if (rotation == 1) {
-			return AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 0.5f, heightFromSnow, 1.0f);
+			return AABB.getTemporaryBB(0.0, 0.0, 0.0, 0.5, heightFromSnow, 1.0);
 		} else if (rotation == 2) {
-			return AABB.getTemporaryBB(0.0f, 0.0f, 0.5f, 1.0f, heightFromSnow, 1.0f);
+			return AABB.getTemporaryBB(0.0, 0.0, 0.5, 1.0, heightFromSnow, 1.0);
 		} else {
-			return AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 1.0f, heightFromSnow, 0.5f);
+			return AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, heightFromSnow, 0.5);
 		}
 	}
 
@@ -46,7 +38,7 @@ public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnow
 	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
 		Block<?> blockBelow = world.getBlock(x, y - 1, z);
 		if (blockBelow != null && blockBelow.getLogic() instanceof BlockLogicSnowyStairs) {
-			BlockLogicSnowyStairs<?> blockSnowyStairs = (BlockLogicSnowyStairs<?>) blockBelow.getLogic();
+			BlockLogicSnowyStairs<?, ?> blockSnowyStairs = (BlockLogicSnowyStairs<?, ?>) blockBelow.getLogic();
 			int metadata = world.getBlockMetadata(x, y, z);
 			int belowMetadata = world.getBlockMetadata(x, y - 1, z);
 			int belowLayers = blockSnowyStairs.getLayers(belowMetadata);
@@ -87,4 +79,19 @@ public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnow
 	public boolean isCubeShaped() {
 		return false;
 	}
+
+	@Override
+	public boolean supportsOwnSnow() {
+		return false;
+	}
+
+	@Override
+	public int getMaxLayers() {
+		return 4;
+	};
+
+	@Override
+	public int getLowestLayerHeight() {
+		return 0;
+	};
 }

@@ -4,27 +4,24 @@ import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicStairs;
 import net.minecraft.core.block.Blocks;
-import net.minecraft.core.block.material.Material;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.chunk.Chunk;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.commons.lang3.ArrayUtils;
-
-public class BlockLogicSnowyStairs<T extends BlockLogic> extends BlockLogicSnowy<T> {
-	public BlockLogicSnowyStairs(Block<T> block, Class<BlockLogicStairs> blockLogic,
-			int[] excludedIds) {
-		super(block, Material.snow, blockLogic, excludedIds, true, true);
+public class BlockLogicSnowyStairs<T extends BlockLogic, S extends BlockLogicStairs> extends BlockLogicSnowy<T> {
+	public BlockLogicSnowyStairs(Block<T> block, Class<S> blockLogic, List<Integer> excludedIds) {
+		super(block, blockLogic, excludedIds);
 		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	@Override
-	protected Map<Integer, Integer> initMetadataToBlockId(Class<?> blockLogic, int[] excludedIds) {
+	protected Map<Integer, Integer> initMetadataToBlockId(Class<?> blockLogic, List<Integer> excludedIds) {
 		Hashtable<Integer, Integer> tmp = new Hashtable<>();
 		for (Block<?> b : Blocks.blocksList) {
 			if (this.metadataID == 16) {
@@ -33,7 +30,7 @@ public class BlockLogicSnowyStairs<T extends BlockLogic> extends BlockLogicSnowy
 			if (b == null)
 				continue;
 			int id = b.id();
-			if (!blockLogic.isInstance(b.getLogic()) || ArrayUtils.contains(excludedIds, id))
+			if (!blockLogic.isInstance(b.getLogic()) || excludedIds.contains(id))
 				continue;
 			tmp.put(this.metadataID++, id);
 		}
@@ -87,19 +84,19 @@ public class BlockLogicSnowyStairs<T extends BlockLogic> extends BlockLogicSnowy
 		int metadata = world.getBlockMetadata(x, y, z);
 		int rotation = this.getRotation(metadata);
 		int layers = this.getLayers(metadata);
-		float heightFromSnow = (layers) * 2 / 16.0f;
+		double heightFromSnow = layers * 2 / 16.0;
 		if (rotation == 0) {
-			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 0.5f, 0.5f + heightFromSnow, 1.0f), aabbList);
-			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 0.5, 0.5 + heightFromSnow, 1.0), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.5, 0.0, 0.0, 1.0, 1.0, 1.0), aabbList);
 		} else if (rotation == 1) {
-			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 0.5f, 1.0f, 1.0f), aabbList);
-			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.5f, 0.0f, 0.0f, 1.0f, 0.5f + heightFromSnow, 1.0f), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 0.5, 1.0, 1.0), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.5, 0.0, 0.0, 1.0, 0.5 + heightFromSnow, 1.0), aabbList);
 		} else if (rotation == 2) {
-			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 1.0f, 0.5f + heightFromSnow, 0.5f), aabbList);
-			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 1.0f), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, 0.5 + heightFromSnow, 0.5), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0), aabbList);
 		} else {
-			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f), aabbList);
-			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0f, 0.0f, 0.5f, 1.0f, 0.5f + heightFromSnow, 1.0f), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.5), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.5, 1.0, 0.5 + heightFromSnow, 1.0), aabbList);
 		}
 	}
 
@@ -141,4 +138,19 @@ public class BlockLogicSnowyStairs<T extends BlockLogic> extends BlockLogicSnowy
 	public boolean isCubeShaped() {
 		return false;
 	}
+
+	@Override
+	public boolean supportsOwnSnow() {
+		return true;
+	}
+
+	@Override
+	public int getMaxLayers() {
+		return 4;
+	};
+
+	@Override
+	public int getLowestLayerHeight() {
+		return 4;
+	};
 }

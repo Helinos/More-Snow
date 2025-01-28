@@ -22,7 +22,7 @@ public class BlockModelSnowySlab<T extends BlockLogic> extends BlockModelSnowy<T
         // Render the snow
         renderBlocks.overrideBlockTexture = SNOW_TEXTURE;
         int layers = ((BlockLogicSnowy<?>) block.getLogic()).getLayers(metadata);
-        float height = (layers + 1) * 2 / 16.0f;
+        double height = layers * 2 / 16.0;
 
         bounds.set(0.0, 0.5, 0.0, 1.0, 0.5 + height, 1.0);
         somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);

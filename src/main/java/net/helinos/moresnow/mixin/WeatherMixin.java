@@ -30,7 +30,7 @@ public class WeatherMixin {
 				int metadata = world.getBlockMetadata(x, y, z);
 				int layers = blockSnowy.getLayers(metadata);
 
-				if (layers != 0) {
+				if (layers > 1) {
 					world.setBlockMetadata(x, y, z, metadata - 1);
 					world.markBlockNeedsUpdate(x, y, z);
 				} else {

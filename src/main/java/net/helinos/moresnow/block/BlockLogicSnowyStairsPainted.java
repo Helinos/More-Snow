@@ -2,13 +2,12 @@ package net.helinos.moresnow.block;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
-import net.minecraft.core.block.BlockLogicStairs;
+import net.minecraft.core.block.BlockLogicStairsPainted;
 import net.minecraft.core.block.Blocks;
 
-public class BlockLogicSnowyStairsPainted<T extends BlockLogic> extends BlockLogicSnowyStairs<T> {
-	public BlockLogicSnowyStairsPainted(Block<T> block, Class<BlockLogicStairs> blockLogic,
-			int[] excludedIds) {
-		super(block, blockLogic, excludedIds);
+public class BlockLogicSnowyStairsPainted<T extends BlockLogic> extends BlockLogicSnowyStairs<T, BlockLogicStairsPainted> {
+	public BlockLogicSnowyStairsPainted(Block<T> block, Class<BlockLogicStairsPainted> blockLogic) {
+		super(block, blockLogic, null);
 	}
 
 	@Override

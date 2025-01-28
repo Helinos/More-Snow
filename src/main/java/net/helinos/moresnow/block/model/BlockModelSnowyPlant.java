@@ -19,7 +19,7 @@ public class BlockModelSnowyPlant<T extends BlockLogic> extends BlockModelStanda
 
     @Override
     public boolean render(Tessellator tessellator, int x, int y, int z) {
-        BlockLogicSnowyPlant<?> logic = (BlockLogicSnowyPlant<?>) this.block.getLogic();
+        BlockLogicSnowyPlant<?, ?> logic = (BlockLogicSnowyPlant<?, ?>) this.block.getLogic();
 
         float blockBrightness = 1.0F;
         if (!LightmapHelper.isLightmapEnabled()) {

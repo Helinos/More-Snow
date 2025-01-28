@@ -21,7 +21,7 @@ public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy
 
         // Render the stairs
         boolean somethingRendered = false;
-        BlockLogicSnowyStairs<?> logic = (BlockLogicSnowyStairs<?>) this.block.getLogic();
+        BlockLogicSnowyStairs<?, ?> logic = (BlockLogicSnowyStairs<?, ?>) this.block.getLogic();
         int horizontalRotation = logic.getRotation(metadata);
 
         AABB bounds = AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
@@ -50,7 +50,7 @@ public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy
         // Render the snow
         renderBlocks.overrideBlockTexture = SNOW_TEXTURE;
         int layers = logic.getLayers(metadata);
-        float heightFromSnow = (layers + 1) * 2 / 16.0f;
+        double heightFromSnow = layers * 2 / 16.0;
 
         // Render the snow
         if (horizontalRotation == 0) {

@@ -12,26 +12,31 @@ import net.minecraft.core.block.BlockLogicCropsWheat;
 import net.minecraft.core.block.BlockLogicFence;
 import net.minecraft.core.block.BlockLogicFencePainted;
 import net.minecraft.core.block.BlockLogicFlower;
+import net.minecraft.core.block.BlockLogicFlowerStackable;
 import net.minecraft.core.block.BlockLogicSaplingBase;
 import net.minecraft.core.block.BlockLogicSlab;
 import net.minecraft.core.block.BlockLogicSlabPainted;
 import net.minecraft.core.block.BlockLogicStairs;
+import net.minecraft.core.block.BlockLogicStairsPainted;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.tag.BlockTags;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.chunk.Chunk;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
+import com.llamalad7.mixinextras.lib.apache.commons.ArrayUtils;
+
 import turniplabs.halplibe.helper.BlockBuilder;
 
 public class MSBlocks {
 	public static Block<?> SNOWY_PLANT;
+	public static ArrayList<Block<?>> SNOWY_FLOWER_STACKABLES = new ArrayList<>();
 	public static Block<?> SNOWY_SLAB;
 	public static Block<?> SNOWY_SLAB_PAINTED;
-	public static Block<?> SNOWY_STAIRS;
-	public static Block<?> SNOWY_STAIRS_2;
+	public static ArrayList<Block<?>> SNOWY_STAIRS = new ArrayList<>();
 	public static Block<?> SNOWY_STAIRS_PAINTED;
 	public static Block<?> SNOWY_PARTIAL;
 	public static Block<?> SNOWY_FENCE;
@@ -46,14 +51,18 @@ public class MSBlocks {
 
 		ArrayList<Integer> excludedPlantIDs = new ArrayList<>();
 		for (Block<?> block : Blocks.blocksList) {
-			if (block != null && (block.getLogic() instanceof BlockLogicSaplingBase || block.getLogic() instanceof BlockLogicCropsPumpkin || block.getLogic() instanceof BlockLogicCropsWheat)) {
+			if (
+				block != null && (
+					block.getLogic() instanceof BlockLogicSaplingBase ||
+					block.getLogic() instanceof BlockLogicCropsPumpkin ||
+					block.getLogic() instanceof BlockLogicCropsWheat ||
+					block.getLogic() instanceof BlockLogicFlowerStackable
+				)
+			) {
 				excludedPlantIDs.add(block.id());
 			}
 		}
-		if (excludedPlantIDs.isEmpty()) {
-			MoreSnow.LOGGER.warn("excludedPlantIDs was empty! This is a bug!");
-		}
-		
+
 		SNOWY_PLANT = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setTextures("minecraft:block/block_snow")
@@ -64,6 +73,21 @@ public class MSBlocks {
 				.setBlockModel(block -> new BlockModelSnowyPlant<>(block))
 				.build("snowy_plant", minimumID++, block -> new BlockLogicSnowyPlant<>(block, BlockLogicFlower.class, excludedPlantIDs));
 
+		for (Block<?> flower : Blocks.blocksList) {
+			if (flower != null && flower.getLogic() instanceof BlockLogicFlowerStackable) {
+				Block<?> snowyFlowerStackable = new BlockBuilder(MoreSnow.MOD_ID)
+					.setBlockSound(BlockSounds.CLOTH)
+					.setTextures("minecraft:block/block_snow")
+					.setHardness(0.1f)
+					.setUseInternalLight()
+					.setLightOpacity(0)
+					.setTags(BlockTags.BROKEN_BY_FLUIDS, BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.NOT_IN_CREATIVE_MENU)
+					.setBlockModel(block -> new BlockModelSnowyPlant<>(block))
+					.build("snowy_" + flower.getKey(), minimumID++, block -> new BlockLogicSnowyFlowerStackable<>(block, flower.id()));
+				SNOWY_FLOWER_STACKABLES.add(snowyFlowerStackable);
+			}	
+		}
+
 		SNOWY_SLAB = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
@@ -71,7 +95,7 @@ public class MSBlocks {
 				.setLightOpacity(1)
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
 				.setBlockModel(block -> new BlockModelSnowySlab<>(block))
-				.build("snowy_slab", minimumID++, block -> new BlockLogicSnowySlab<>(block, BlockLogicSlab.class, new int[] { Blocks.SLAB_PLANKS_PAINTED.id() }));
+				.build("snowy_slab", minimumID++, block -> new BlockLogicSnowySlab<>(block, BlockLogicSlab.class, Collections.singletonList(Blocks.SLAB_PLANKS_PAINTED.id())));
 
 		SNOWY_SLAB_PAINTED = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
@@ -80,25 +104,27 @@ public class MSBlocks {
 				.setLightOpacity(1)
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
 				.setBlockModel(block -> new BlockModelSnowySlab<>(block))
-				.build("snowy_slab_painted", minimumID++, block -> new BlockLogicSnowySlabPainted<>(block, BlockLogicSlabPainted.class, new int[0]));
-
-		SNOWY_STAIRS = new BlockBuilder(MoreSnow.MOD_ID)
+				.build("snowy_slab_painted", minimumID++, block -> new BlockLogicSnowySlabPainted<>(block, BlockLogicSlabPainted.class));
+		
+		List<Integer> usedStairIDs = new ArrayList<>();
+		usedStairIDs.add(Blocks.STAIRS_PLANKS_PAINTED.id());
+		for(int index = 1; true; index++) {
+			Block<?> snowyStairs = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
 				.setUseInternalLight()
 				.setLightOpacity(15)
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
 				.setBlockModel(block -> new BlockModelSnowyStairs<>(block))
-				.build("snowy_stairs", minimumID++, block -> new BlockLogicSnowyStairs<>(block, BlockLogicStairs.class, new int[] { Blocks.STAIRS_PLANKS_PAINTED.id() }));
-
-		SNOWY_STAIRS_2 = new BlockBuilder(MoreSnow.MOD_ID)
-				.setBlockSound(BlockSounds.CLOTH)
-				.setHardness(0.1f)
-				.setUseInternalLight()
-				.setLightOpacity(15)
-				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
-				.setBlockModel(block -> new BlockModelSnowyStairs<>(block))
-				.build("snowy_stairs_2", minimumID++, block -> new BlockLogicSnowyStairs<>(block, BlockLogicStairs.class, ArrayUtils.add(((BlockLogicSnowyStairs<?>) SNOWY_STAIRS.getLogic()).USED_IDS, Blocks.STAIRS_PLANKS_PAINTED.id())));
+				.build("snowy_stairs_" + index, minimumID++, block -> new BlockLogicSnowyStairs<>(block, BlockLogicStairs.class, usedStairIDs));
+			SNOWY_STAIRS.add(snowyStairs);
+			
+			if (((BlockLogicSnowyStairs<?, ?>) snowyStairs.getLogic()).USED_IDS.size() >= 16) {
+				usedStairIDs.addAll(((BlockLogicSnowyStairs<?, ?>) snowyStairs.getLogic()).USED_IDS);
+			} else {
+				break;
+			}
+		}
 
 		SNOWY_STAIRS_PAINTED = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
@@ -107,7 +133,7 @@ public class MSBlocks {
 				.setLightOpacity(15)
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
 				.setBlockModel(block -> new BlockModelSnowyStairs<>(block))
-				.build("snowy.stairs.painted", minimumID++, block -> new BlockLogicSnowyStairsPainted<>(block, BlockLogicStairs.class, ArrayUtils.addAll(((BlockLogicSnowyStairs<?>) SNOWY_STAIRS.getLogic()).USED_IDS, ((BlockLogicSnowyStairs<?>) SNOWY_STAIRS.getLogic()).USED_IDS)));
+				.build("snowy.stairs.painted", minimumID++, block -> new BlockLogicSnowyStairsPainted<>(block, BlockLogicStairsPainted.class));
 
 		SNOWY_PARTIAL = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
@@ -125,7 +151,7 @@ public class MSBlocks {
 				.setLightOpacity(0)
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
 				.setBlockModel(block -> new BlockModelSnowyFence<>(block))
-				.build("snowy.fence", minimumID++, block -> new BlockLogicSnowyFence<>(block, BlockLogicFence.class, new int[] { Blocks.FENCE_PLANKS_OAK_PAINTED.id() }));
+				.build("snowy.fence", minimumID++, block -> new BlockLogicSnowyFence<>(block, BlockLogicFence.class, Collections.singletonList(Blocks.FENCE_PLANKS_OAK_PAINTED.id())));
 
 		SNOWY_FENCE_PAINTED = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
@@ -134,22 +160,30 @@ public class MSBlocks {
 				.setLightOpacity(0)
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
 				.setBlockModel(block -> new BlockModelSnowyFence<>(block))
-				.build("snowy.fence.painted", minimumID++, block -> new BlockLogicSnowyFencePainted<>(block, BlockLogicFencePainted.class, new int[0]));
+				.build("snowy.fence.painted", minimumID++, block -> new BlockLogicSnowyFencePainted<>(block, BlockLogicFencePainted.class));
 
-		transparentIds = new int[] { 
-			SNOWY_PLANT.id(), 
+		transparentIds = new int[] {
+			SNOWY_PLANT.id(),
 			SNOWY_PARTIAL.id() 
 		};
-		solidIds = new int[] { 
+		transparentIds = ArrayUtils.addAll(
+			transparentIds,
+			SNOWY_FLOWER_STACKABLES.stream().mapToInt(block -> block.id()).toArray()
+		);
+
+		solidIds = new int[] {
 			SNOWY_SLAB.id(), 
-			SNOWY_SLAB_PAINTED.id(), 
-			SNOWY_STAIRS.id(), 
-			SNOWY_STAIRS_2.id(), 
+			SNOWY_SLAB_PAINTED.id(),
 			SNOWY_STAIRS_PAINTED.id(),
 			SNOWY_FENCE.id(), 
 			SNOWY_FENCE_PAINTED.id()
 		};
-		blockIds = ArrayUtils.addAll(transparentIds, solidIds);
+		solidIds = ArrayUtils.addAll(
+			solidIds,
+			SNOWY_STAIRS.stream().mapToInt(block -> block.id()).toArray()
+		);
+
+		blockIds = ArrayUtils.addAll(solidIds, transparentIds);
 
 		MoreSnow.LOGGER.info("Initialized Blocks.");
 	}

@@ -18,42 +18,42 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class BlockLogicLayerSnowMixin {
 	@Redirect(method = "accumulate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockId(III)I", ordinal = 0))
 	private int blockId1(World world, int x, int y, int z) {
-		return accountForSnowy(world, x, y, z);
+		return this.accountForSnowy(world, x, y, z);
 	}
 
 	@Redirect(method = "accumulate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockMetadata(III)I", ordinal = 1))
 	private int metadata1(World world, int x, int y, int z) {
-		return getLayers(world, x, y, z);
+		return this.getLayers(world, x, y, z);
 	}
 
 	@Redirect(method = "accumulate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockId(III)I", ordinal = 1))
 	private int blockId2(World world, int x, int y, int z) {
-		return accountForSnowy(world, x, y, z);
+		return this.accountForSnowy(world, x, y, z);
 	}
 
 	@Redirect(method = "accumulate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockMetadata(III)I", ordinal = 2))
 	private int metadata2(World world, int x, int y, int z) {
-		return getLayers(world, x, y, z);
+		return this.getLayers(world, x, y, z);
 	}
 
 	@Redirect(method = "accumulate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockId(III)I", ordinal = 2))
 	private int blockId3(World world, int x, int y, int z) {
-		return accountForSnowy(world, x, y, z);
+		return this.accountForSnowy(world, x, y, z);
 	}
 
 	@Redirect(method = "accumulate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockMetadata(III)I", ordinal = 3))
 	private int metadata3(World world, int x, int y, int z) {
-		return getLayers(world, x, y, z);
+		return this.getLayers(world, x, y, z);
 	}
 
 	@Redirect(method = "accumulate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockId(III)I", ordinal = 3))
 	private int blockId4(World world, int x, int y, int z) {
-		return accountForSnowy(world, x, y, z);
+		return this.accountForSnowy(world, x, y, z);
 	}
 
 	@Redirect(method = "accumulate", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;getBlockMetadata(III)I", ordinal = 4))
 	private int metadata4(World world, int x, int y, int z) {
-		return getLayers(world, x, y, z);
+		return this.getLayers(world, x, y, z);
 	}
 
 	@Unique
@@ -73,7 +73,7 @@ public abstract class BlockLogicLayerSnowMixin {
 		int metadata = world.getBlockMetadata(x, y, z);
 
 		if (block.getLogic() instanceof BlockLogicSnowy) {
-			return ((BlockLogicSnowy<?>) block.getLogic()).getRelativeLayers(metadata);
+			return ((BlockLogicSnowy<?>) block.getLogic()).getRelativeLayers(metadata) - 1;
 		}
 
 		return metadata;

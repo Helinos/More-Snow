@@ -61,7 +61,7 @@ public class BlockModelSnowyFence<T extends BlockLogic> extends BlockModelSnowy<
         renderBlocks.overrideBlockTexture = SNOW_TEXTURE;
 
         int layers = logic.getLayers(metadata);
-        float height = (layers + 1) * 2 / 16.0f;
+        double height = layers * 2 / 16.0;
         AABB bounds = AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, height, 1.0);
         somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
 

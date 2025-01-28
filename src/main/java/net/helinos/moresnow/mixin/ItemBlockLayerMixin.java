@@ -51,16 +51,16 @@ public class ItemBlockLayerMixin {
 			}
 
 			if (block.getLogic() instanceof BlockLogicSnowyPlant) {
-				if ((newMetadata & blockSnowy.maxLayers) < 7) {
+				if ((newMetadata & blockSnowy.getMaxLayers() - 1) < 7) {
 					world.setBlockAndMetadataWithNotify(blockX, blockY, blockZ, MSBlocks.SNOWY_PLANT.id(), newMetadata);
 				} else {
-					int storedID = ((BlockLogicSnowyPlant<?>) MSBlocks.SNOWY_PLANT.getLogic()).getStoredBlockId(metadata);
+					int storedID = ((BlockLogicSnowyPlant<?, ?>) MSBlocks.SNOWY_PLANT.getLogic()).getStoredBlockId(metadata);
 					block.getLogic().dropBlockWithCause(world, EnumDropCause.WORLD, blockX, blockY, blockZ, metadata, null, null);
 					world.playBlockSoundEffect(player, blockX, blockY, blockZ, Blocks.getBlock(storedID), EnumBlockSoundEffectType.DIG);
 					world.setBlockWithNotify(blockX, blockY, blockZ, Blocks.BLOCK_SNOW.id());
 				}
 			} else if (ArrayUtils.contains(MSBlocks.blockIds, blockId)) {
-				if ((newMetadata & blockSnowy.maxLayers) != 0) {
+				if ((newMetadata & blockSnowy.getMaxLayers() - 1) != 0) {
 					if (block.getLogic() instanceof BlockLogicSnowyStairs && world.getBlockId(blockX, blockY + 1, blockZ) == 0) {
 						world.setBlockAndMetadataWithNotify(blockX, blockY + 1, blockZ, MSBlocks.SNOWY_PARTIAL.id(), newMetadata & 0b1111);
 					}

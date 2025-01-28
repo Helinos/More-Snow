@@ -1,12 +1,12 @@
 package net.helinos.moresnow.block;
 
-import net.minecraft.core.block.material.Material;
 import net.minecraft.core.block.tag.BlockTags;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
@@ -14,8 +14,8 @@ import net.minecraft.core.block.BlockLogicFence;
 import net.minecraft.core.block.Blocks;
 
 public class BlockLogicSnowyFence<T extends BlockLogic, F extends BlockLogicFence> extends BlockLogicSnowy<T> {
-    public BlockLogicSnowyFence(Block<T> block, Class<F> blockLogic, int[] excludedIds) {
-        super(block, Material.snow, blockLogic, excludedIds, false, false);
+    public BlockLogicSnowyFence(Block<T> block, Class<F> blockLogic, List<Integer> excludedIds) {
+        super(block, blockLogic, excludedIds);
         this.setBlockBounds(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
     }
 
@@ -29,7 +29,7 @@ public class BlockLogicSnowyFence<T extends BlockLogic, F extends BlockLogicFenc
     public void getCollidingBoundingBoxes(World world, int x, int y, int z, AABB aabb, ArrayList aabbList) {
         int metadata = world.getBlockMetadata(x, y, z);
         int layers = this.getLayers(metadata);
-        float height = layers * 2 / 16.0f;
+        double height = layers * 2 / 16.0;
 
         AABB bounds = AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, height, 1.0);
         super.getCollidingBoundingBoxes(world, x, y, z, bounds, aabbList);
@@ -59,4 +59,9 @@ public class BlockLogicSnowyFence<T extends BlockLogic, F extends BlockLogicFenc
     public boolean isCubeShaped() {
         return false;
     }
+
+    @Override
+	public boolean supportsOwnSnow() {
+		return false;
+	}
 }

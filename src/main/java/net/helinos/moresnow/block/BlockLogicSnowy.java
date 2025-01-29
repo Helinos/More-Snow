@@ -163,7 +163,7 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 	 * @see BlockLogicSnowy#tryMakeSnowy(World, int, int, int, int, int)
 	 */
 	public boolean tryMakeSnowy(Chunk chunk, int id, int meta, int x, int y, int z) {
-		if (!this.canReplaceBlock(id, meta) || !!canSupportSnow(chunk, x, y, z))
+		if (!this.canReplaceBlock(id, meta) || !canSupportSnow(chunk, x, y, z))
 			return false;
 		return chunk.setBlockIDWithMetadata(x, y, z, this.block.id(), this.blockToMetadata(id, meta));
 	}

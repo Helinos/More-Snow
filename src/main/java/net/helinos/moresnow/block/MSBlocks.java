@@ -151,59 +151,39 @@ public class MSBlocks {
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
 				.build("snowy.fence.painted", minimumID++, block -> new BlockLogicSnowyFencePainted<>(block, BlockLogicFencePainted.class));
 
-		transparentIds = new int[] {
+		blockIds = new int[] {
 			SNOWY_PLANT.id(),
-			SNOWY_PARTIAL.id() 
-		};
-		transparentIds = ArrayUtils.addAll(
-			transparentIds,
-			SNOWY_FLOWER_STACKABLES.stream().mapToInt(block -> block.id()).toArray()
-		);
-
-		solidIds = new int[] {
+			SNOWY_PARTIAL.id(),
 			SNOWY_SLAB.id(), 
 			SNOWY_SLAB_PAINTED.id(),
 			SNOWY_STAIRS_PAINTED.id(),
 			SNOWY_FENCE.id(), 
 			SNOWY_FENCE_PAINTED.id()
 		};
-		solidIds = ArrayUtils.addAll(
-			solidIds,
+		blockIds = ArrayUtils.addAll(
+			blockIds,
+			SNOWY_FLOWER_STACKABLES.stream().mapToInt(block -> block.id()).toArray()
+		);
+		blockIds = ArrayUtils.addAll(
+			blockIds,
 			SNOWY_STAIRS.stream().mapToInt(block -> block.id()).toArray()
 		);
-
-		blockIds = ArrayUtils.addAll(solidIds, transparentIds);
 
 		MoreSnow.LOGGER.info("Initialized Blocks.");
 	}
 
 	public static BlockLogicSnowy<?> whichCanReplace(int id, int metadata) {
-		for (int whichId : transparentIds) {
+		for (int whichId : blockIds) {
 			BlockLogicSnowy<?> blockLogic = (BlockLogicSnowy<?>) Blocks.getBlock(whichId).getLogic();
 			if (blockLogic.canReplaceBlock(id, metadata))
 				return blockLogic;
-		}
-		return whichCanReplaceSolid(id, metadata);
-	}
-
-	public static BlockLogicSnowy<?> whichCanReplaceSolid(int id, int metadata) {
-		for (int whichId : solidIds) {
-			BlockLogicSnowy<?> block = (BlockLogicSnowy<?>) Blocks.getBlock(whichId).getLogic();
-			if (block.canReplaceBlock(id, metadata))
-				return block;
 		}
 		return null;
 	}
 
 	public static boolean tryMakeSnowy(World world, int id, int x, int y, int z) {
-		boolean placed = tryMakeSnowyTransparent(world, id, x, y, z);
-		placed |= tryMakeSnowySolid(world, id, x, y, z);
-		return placed;
-	}
-
-	public static boolean tryMakeSnowyTransparent(World world, int id, int x, int y, int z) {
 		boolean placed = false;
-		for (int whichId : transparentIds) {
+		for (int whichId : blockIds) {
 			BlockLogicSnowy<?> block = (BlockLogicSnowy<?>) Blocks.getBlock(whichId).getLogic();
 			placed = block.tryMakeSnowy(world, id, x, y, z);
 			if (placed)
@@ -212,31 +192,10 @@ public class MSBlocks {
 		return placed;
 	}
 
-	public static boolean tryMakeSnowySolid(World world, int id, int x, int y, int z) {
-		boolean placed = false;
-		for (int whichId : solidIds) {
-			BlockLogicSnowy<?> block = (BlockLogicSnowy<?>) Blocks.getBlock(whichId).getLogic();
-			placed = block.tryMakeSnowy(world, id, x, y, z);
-			if (placed)
-				break;
-		}
-		return placed;
-	}
 
-	public static boolean tryMakeSnowyTransparent(Chunk chunk, int id, int x, int y, int z) {
+	public static boolean tryMakeSnowy(Chunk chunk, int id, int x, int y, int z) {
 		boolean placed = false;
-		for (int whichId : transparentIds) {
-			BlockLogicSnowy<?> blockLogic = (BlockLogicSnowy<?>) Blocks.getBlock(whichId).getLogic();
-			placed = blockLogic.tryMakeSnowy(chunk, id, x, y, z);
-			if (placed)
-				break;
-		}
-		return placed;
-	}
-
-	public static boolean tryMakeSnowySolid(Chunk chunk, int id, int x, int y, int z) {
-		boolean placed = false;
-		for (int whichId : solidIds) {
+		for (int whichId : blockIds) {
 			BlockLogicSnowy<?> blockLogic = (BlockLogicSnowy<?>) Blocks.getBlock(whichId).getLogic();
 			placed = blockLogic.tryMakeSnowy(chunk, id, x, y, z);
 			if (placed)

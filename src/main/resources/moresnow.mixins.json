@@ -9,7 +9,8 @@
     "ItemBlockLayerMixin",
     "WeatherMixin",
     "WeatherSnowMixin",
-    "MinecraftMixin"
+    "MinecraftMixin",
+    "WorldMixin"
   ],
   "client": [],
   "injectors": {

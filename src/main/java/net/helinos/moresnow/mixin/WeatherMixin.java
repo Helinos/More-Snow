@@ -1,11 +1,14 @@
 package net.helinos.moresnow.mixin;
 
+import net.helinos.moresnow.MoreSnow;
 import net.helinos.moresnow.block.BlockLogicSnowy;
+import net.helinos.moresnow.interfaces.mixin.IWorld;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.weather.Weather;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,6 +41,14 @@ public abstract class WeatherMixin {
 					blockSnowy.removeSnow(world, metadata, x, y, z);
 				}
 			}
+		}
+	}
+
+	@Inject(method = "doChunkLoadEffect", at = @At(value = "HEAD"), cancellable = true)
+	private void addSnowIfHasSnowed(World world, Chunk chunk, CallbackInfo callbackInfo) {
+		if (((IWorld) world).getHasSnowed()) {
+			callbackInfo.cancel();
+			MoreSnow.moreSnowChunkLoadEffect(world, chunk);
 		}
 	}
 

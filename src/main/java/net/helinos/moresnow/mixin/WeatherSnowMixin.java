@@ -1,12 +1,11 @@
 package net.helinos.moresnow.mixin;
 
+import net.helinos.moresnow.MoreSnow;
 import net.helinos.moresnow.block.BlockLogicSnowy;
 import net.helinos.moresnow.block.MSBlocks;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicFence;
-import net.minecraft.core.block.BlockLogicFenceChainlink;
-import net.minecraft.core.block.BlockLogicFenceSteel;
 import net.minecraft.core.block.BlockLogicFenceThin;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.enums.LightLayer;
@@ -25,7 +24,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(value = WeatherSnow.class, remap = false)
 public abstract class WeatherSnowMixin extends Weather {
@@ -128,19 +126,10 @@ public abstract class WeatherSnowMixin extends Weather {
 		}
 	}
 
-	@Inject(method = "doChunkLoadEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/chunk/Chunk;getBlockID(III)I", shift = At.Shift.AFTER, ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void doChunkLoadEffect(World world, Chunk chunk, CallbackInfo callbackInfo, int x, int worldX, int z, int worldZ, int y, Biome biome, int blockId) {
-		int blockIdBelow = chunk.getBlockID(x, y - 1, z);
-
-		if (
-			y < 0 
-			|| y >= world.getHeightBlocks() 
-			|| chunk.getBrightness(LightLayer.Block, x, y, z) >= 10
-		) {
-			return;
-		}
-
-		MSBlocks.tryMakeSnowy(chunk, blockId, x, y, z);
-		MSBlocks.tryMakeSnowy(chunk, blockIdBelow, x, y - 1, z);
+	@Inject(method = "doChunkLoadEffect", at = @At(value = "HEAD") , cancellable = true)
+	private void doChunkLoadEffect(World world, Chunk chunk, CallbackInfo callbackInfo) {
+		if (world.weatherManager.getWeatherPower() > 0.6F)
+			MoreSnow.moreSnowChunkLoadEffect(world, chunk);
+		callbackInfo.cancel();
 	}
 }

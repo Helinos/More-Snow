@@ -44,16 +44,11 @@ public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnow
 			int belowLayers = blockSnowyStairs.getLayers(belowMetadata);
 
 			if (belowLayers != this.getLayers(metadata)) {
-				world.setBlockMetadata(x, y, z, (metadata & 0b11111100) | belowLayers);
+				world.setBlockMetadata(x, y, z, (metadata & 0b11111100) | belowLayers - 1);
 			}
 		} else {
 			world.setBlockWithNotify(x, y, z, 0);
 		}
-	}
-
-	@Override
-	public int getRelativeLayers(int metadata) {
-		return getLayers(metadata);
 	}
 
 	@Override

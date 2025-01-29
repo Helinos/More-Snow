@@ -31,23 +31,22 @@ public class BlockLogicSnowyFence<T extends BlockLogic, F extends BlockLogicFenc
         int layers = this.getLayers(metadata);
         double height = layers * 2 / 16.0;
 
-        AABB bounds = AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, height, 1.0);
-        super.getCollidingBoundingBoxes(world, x, y, z, bounds, aabbList);
+        this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, height, 1.0).move(x, y, z), aabbList);
 
         boolean connectXPos = this.canConnectTo(world, x + 1, y, z);
         boolean connectXNeg = this.canConnectTo(world, x - 1, y, z);
         boolean connectZPos = this.canConnectTo(world, x, y, z + 1);
         boolean connectZNeg = this.canConnectTo(world, x, y, z - 1);
 
-        bounds.set(
+        AABB bounds = AABB.getTemporaryBB(
                 0.0 + (connectXNeg ? 0.0 : 0.375),
                 0.0,
                 0.0 + (connectZNeg ? 0.0 : 0.375),
                 1.0 - (connectXPos ? 0.0 : 0.375),
                 1.5,
                 1.0 - (connectZPos ? 0.0 : 0.375)
-            );
-        super.getCollidingBoundingBoxes(world, x, y, z, bounds, aabbList);
+            ).move(x, y, z);
+        this.addIntersectingBoundingBox(aabb, bounds, aabbList);
     }
 
     @Override

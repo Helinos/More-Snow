@@ -9,6 +9,7 @@ import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicFlower;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.data.gamerule.GameRules;
+import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
@@ -65,6 +66,7 @@ public class BlockLogicSnowyPlant<T extends BlockLogic, F extends BlockLogicFlow
 			this.getKilledByWeather(metadata) &&
 			random.nextInt(256) == 0
 		) {
+			this.dropBlockWithCause(world, EnumDropCause.WORLD, x, y, z, world.getBlockMetadata(x, y, z), null, null);
 			world.setBlockAndMetadataWithNotify(x, y, z, Blocks.LAYER_SNOW.id(), this.getLayers(z) - 1);
 		}
 	}

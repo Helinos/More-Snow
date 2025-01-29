@@ -58,17 +58,29 @@ public abstract class WeatherSnowMixin extends Weather {
 			return;
 		}
 
-		if (
-			blockID == 0 &&
-			blockIDBelow != 0
-		) {
-			if (Blocks.LAYER_SNOW.canPlaceBlockAt(world, x, y, z) && blockIDBelow != Blocks.ICE.id()) {
+		if (blockIDBelow != 0) {
+			if (
+				blockID == 0 &&
+				Blocks.LAYER_SNOW.canPlaceBlockAt(world, x, y, z) && 
+				blockIDBelow != Blocks.ICE.id()
+			) {
 				world.setBlockWithNotify(x, y, z, Blocks.LAYER_SNOW.id());
-			} else {
-				MSBlocks.tryMakeSnowy(world, blockIDBelow, x, y - 1, z);
+				callbackInfo.cancel();
+				return;
+			} else if (MSBlocks.tryMakeSnowy(world, blockID, x, y, z)) {
+				callbackInfo.cancel();
+				return;
+			} else if (MSBlocks.tryMakeSnowy(world, blockIDBelow, x, y - 1, z)) {
+				callbackInfo.cancel();
+				return;
 			}
-		} else if (
-			(blockID == Blocks.LAYER_SNOW.id() || blockBelowLogic instanceof BlockLogicSnowy) &&
+		}
+		
+		if (
+			(
+				blockID == Blocks.LAYER_SNOW.id() || 
+				blockBelowLogic instanceof BlockLogicSnowy
+			) &&
 			world.getSeasonManager().getCurrentSeason() != null &&
 			(biomeHasDeeperSnow || biome == Biomes.OVERWORLD_GLACIER)
 		) {
@@ -82,7 +94,12 @@ public abstract class WeatherSnowMixin extends Weather {
 			} else {
 				((BlockLogicSnowy<?>) blockBelowLogic).accumulate(world, x, y - 1, z);
 			}
-		} else if (
+
+			callbackInfo.cancel();
+			return;
+		}
+		
+		if (
 			blockIDBelow == Blocks.FLUID_WATER_STILL.id() && 
 			world.getBlockMetadata(x, y - 1, z) == 0 &&
 			random.nextFloat() < world.weatherManager.getWeatherPower() * world.weatherManager.getWeatherIntensity()

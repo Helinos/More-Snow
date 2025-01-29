@@ -17,8 +17,11 @@
     "main": [
       "net.helinos.moresnow.MoreSnow"
     ],
-    "afterGameStart": [
+    "afterBlockInit": [
       "net.helinos.moresnow.MoreSnow"
+    ],
+    "initModels": [
+      "net.helinos.moresnow.block.MSModels"
     ]
   },
   "mixins": [

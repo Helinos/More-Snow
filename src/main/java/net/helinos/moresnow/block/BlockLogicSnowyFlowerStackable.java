@@ -29,6 +29,6 @@ public class BlockLogicSnowyFlowerStackable<T extends BlockLogic> extends BlockL
 
 	@Override
 	protected int blockToMetadata(int blockId, int metadata) {
-		return 0;
+		return metadata;
 	}
 }

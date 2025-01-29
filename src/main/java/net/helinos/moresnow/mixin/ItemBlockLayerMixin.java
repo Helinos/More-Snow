@@ -51,10 +51,10 @@ public class ItemBlockLayerMixin {
 			}
 
 			if (block.getLogic() instanceof BlockLogicSnowyPlant) {
-				if ((newMetadata & blockSnowy.getMaxLayers() - 1) < 7) {
-					world.setBlockAndMetadataWithNotify(blockX, blockY, blockZ, MSBlocks.SNOWY_PLANT.id(), newMetadata);
+				if ((newMetadata & blockSnowy.getMaxLayers() - 1) < blockSnowy.getMaxLayers() - 1) {
+					world.setBlockAndMetadataWithNotify(blockX, blockY, blockZ, block.id(), newMetadata);
 				} else {
-					int storedID = ((BlockLogicSnowyPlant<?, ?>) MSBlocks.SNOWY_PLANT.getLogic()).getStoredBlockId(metadata);
+					int storedID = ((BlockLogicSnowyPlant<?, ?>) block.getLogic()).getStoredBlockId(metadata);
 					block.getLogic().dropBlockWithCause(world, EnumDropCause.WORLD, blockX, blockY, blockZ, metadata, null, null);
 					world.playBlockSoundEffect(player, blockX, blockY, blockZ, Blocks.getBlock(storedID), EnumBlockSoundEffectType.DIG);
 					world.setBlockWithNotify(blockX, blockY, blockZ, Blocks.BLOCK_SNOW.id());

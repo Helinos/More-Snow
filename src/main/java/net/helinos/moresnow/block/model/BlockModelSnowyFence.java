@@ -18,7 +18,7 @@ public class BlockModelSnowyFence<T extends BlockLogic> extends BlockModelSnowy<
 
         boolean somethingRendered = false;
 
-        if (logic.getLayers(metadata) != 7) {
+        if (logic.getLayers(metadata) != 8) {
             // Center post
             AABB bounds = AABB.getTemporaryBB(0.375, 0.0, 0.375, 0.625, 1.0, 0.625);
             this.renderStandardBlock(tessellator, bounds, x, y, z);

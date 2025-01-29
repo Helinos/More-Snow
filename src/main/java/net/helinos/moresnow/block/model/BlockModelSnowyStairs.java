@@ -1,16 +1,12 @@
 package net.helinos.moresnow.block.model;
 
 import net.helinos.moresnow.block.BlockLogicSnowyStairs;
-import net.minecraft.client.render.texture.stitcher.IconCoordinate;
-import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.util.phys.AABB;
 
-public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy<T> {
-    public static final IconCoordinate SNOW_TEXTURE = TextureRegistry.getTexture("minecraft:block/block_snow");
-
+public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy<T> {   
     public BlockModelSnowyStairs(Block<T> block) {
         super(block);
     }
@@ -48,7 +44,7 @@ public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy
         }
 
         // Render the snow
-        renderBlocks.overrideBlockTexture = SNOW_TEXTURE;
+        renderBlocks.overrideBlockTexture = BlockModelSnowy.SNOW_TEXTURE;
         int layers = logic.getLayers(metadata);
         double heightFromSnow = layers * 2 / 16.0;
 

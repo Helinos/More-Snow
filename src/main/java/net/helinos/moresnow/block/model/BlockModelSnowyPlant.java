@@ -28,8 +28,7 @@ public class BlockModelSnowyPlant<T extends BlockLogic> extends BlockModelStanda
             tessellator.setLightmapCoord(this.block.getLightmapCoord(renderBlocks.blockAccess, x, y, z));
         }
 
-        int blockColor = BlockColorDispatcher.getInstance().getDispatch(this.block)
-                .getWorldColor(renderBlocks.blockAccess, x, y, z);
+        int blockColor = BlockColorDispatcher.getInstance().getDispatch(this.block).getWorldColor(renderBlocks.blockAccess, x, y, z);
         float red = (blockColor >> 16 & 0xFF) / 255.0f;
         float green = (blockColor >> 8 & 0xFF) / 255.0f;
         float blue = (blockColor & 0xFF) / 255.0f;
@@ -54,8 +53,7 @@ public class BlockModelSnowyPlant<T extends BlockLogic> extends BlockModelStanda
         IconCoordinate textureIndex;
 
         try {
-            textureIndex = BlockModelDispatcher.getInstance().getDispatch(storedBlock)
-                    .getBlockTextureFromSideAndMetadata(Side.BOTTOM, 0);
+            textureIndex = BlockModelDispatcher.getInstance().getDispatch(storedBlock).getBlockTextureFromSideAndMetadata(Side.BOTTOM, logic.getStoredBlockMetadata(metadata));
         } catch (NullPointerException _exception) {
             textureIndex = BLOCK_TEXTURE_UNASSIGNED;
         }
@@ -85,6 +83,7 @@ public class BlockModelSnowyPlant<T extends BlockLogic> extends BlockModelStanda
         tessellator.addVertexWithUV(minX, renderY + 0.0, maxZ, maxU, maxV);
         tessellator.addVertexWithUV(minX, renderY + 1.0 + 0.0, maxZ, maxU, minV);
 
-        return super.render(tessellator, x, y, z);
+        boolean somethingRendered = super.render(tessellator, x, y, z);
+        return somethingRendered;
     }
 }

@@ -8,7 +8,8 @@
     "BlockLogicLayerSnowMixin",
     "ItemBlockLayerMixin",
     "WeatherMixin",
-    "WeatherSnowMixin"
+    "WeatherSnowMixin",
+    "MinecraftMixin"
   ],
   "client": [],
   "injectors": {

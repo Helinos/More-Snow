@@ -212,7 +212,6 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 		}
 
 		world.setBlockMetadataWithNotify(x, y, z, metadata + 1);
-		world.markBlockNeedsUpdate(x, y, z);
 	}
 
 	private boolean isBlockValid(World world, int x, int y, int z, int relativeLayers) {
@@ -280,16 +279,17 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 	public void updateTick(World world, int x, int y, int z, Random random) {
 		if (world.getSavedLightValue(LightLayer.Block, x, y, z) > 11) {
 			int metadata = world.getBlockMetadata(x, y, z);
-			this.dropBlockWithCause(world, EnumDropCause.WORLD, x, y, z, metadata, null, null);
+			//this.dropBlockWithCause(world, EnumDropCause.WORLD, x, y, z, metadata, null, null);
 			this.removeSnow(world, metadata, x, y, z);
 		}
 		if (
-			world.getBlockBiome(x, y, z) != null && !world.getBlockBiome(x, y, z).hasSurfaceSnow() && 
+			world.getBlockBiome(x, y, z) != null && 
+			!world.getBlockBiome(x, y, z).hasSurfaceSnow() && 
 			world.seasonManager.getCurrentSeason() != null &&
 			world.seasonManager.getCurrentSeason().letWeatherCleanUpSnow
 		) {
 			int metadata = world.getBlockMetadata(x, y, z);
-			this.dropBlockWithCause(world, EnumDropCause.WORLD, x, y, z, world.getBlockMetadata(x, y, z), null, null);
+			//this.dropBlockWithCause(world, EnumDropCause.WORLD, x, y, z, world.getBlockMetadata(x, y, z), null, null);
 			this.removeSnow(world, metadata, x, y, z);
 		}
 	}

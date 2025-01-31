@@ -37,6 +37,9 @@ public class MSBlocks {
 	public static Block<?> SNOWY_PARTIAL;
 	public static Block<?> SNOWY_FENCE;
 	public static Block<?> SNOWY_FENCE_PAINTED;
+	public static Block<?> SNOWY_FENCE_WALLPAPER;
+	public static Block<?> SNOWY_FENCE_STEEL;
+	public static Block<?> SNOWY_FENCE_CHAINLINK;
 
 	public static int[] transparentIds;
 	public static int[] solidIds;
@@ -151,6 +154,32 @@ public class MSBlocks {
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
 				.build("snowy.fence.painted", minimumID++, block -> new BlockLogicSnowyFencePainted<>(block, BlockLogicFencePainted.class));
 
+		SNOWY_FENCE_WALLPAPER = new BlockBuilder(MoreSnow.MOD_ID)
+				.setBlockSound(BlockSounds.CLOTH)
+				.setHardness(0.1f)
+				.setUseInternalLight()
+				.setVisualUpdateOnMetadata()
+				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
+				.build("snowy.fence.wall_paper", minimumID++, BlockLogicSnowyFenceWallPaper::new);
+
+		SNOWY_FENCE_STEEL = new BlockBuilder(MoreSnow.MOD_ID)
+				.setBlockSound(BlockSounds.CLOTH)
+				.setHardness(0.1f)
+				.setUseInternalLight()
+				.setVisualUpdateOnMetadata()
+				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.CHAINLINK_FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
+				.build("snowy.fence.steel", minimumID++, BlockLogicSnowyFenceSteel::new);
+
+		SNOWY_FENCE_CHAINLINK = new BlockBuilder(MoreSnow.MOD_ID)
+				.setBlockSound(BlockSounds.CLOTH)
+				.setBlockSound(BlockSounds.CLOTH)
+				.setHardness(0.1f)
+				.setUseInternalLight()
+				.setVisualUpdateOnMetadata()
+				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.CHAINLINK_FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
+				.build("snowy.fence.chainlink", minimumID++, BlockLogicSnowyFenceChainlink::new);
+
+
 		blockIds = new int[] {
 			SNOWY_PLANT.id(),
 			SNOWY_PARTIAL.id(),
@@ -158,7 +187,10 @@ public class MSBlocks {
 			SNOWY_SLAB_PAINTED.id(),
 			SNOWY_STAIRS_PAINTED.id(),
 			SNOWY_FENCE.id(), 
-			SNOWY_FENCE_PAINTED.id()
+			SNOWY_FENCE_PAINTED.id(),
+			SNOWY_FENCE_WALLPAPER.id(),
+			SNOWY_FENCE_STEEL.id(),
+			SNOWY_FENCE_CHAINLINK.id()
 		};
 		blockIds = ArrayUtils.addAll(
 			blockIds,

@@ -50,6 +50,11 @@ public class BlockLogicSnowyFence<T extends BlockLogic, F extends BlockLogicFenc
     }
 
     @Override
+    public boolean canPlaceOnSurface() {
+        return true;
+    }
+
+    @Override
     public boolean isSolidRender() {
         return false;
     }

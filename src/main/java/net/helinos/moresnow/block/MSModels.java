@@ -1,6 +1,7 @@
 package net.helinos.moresnow.block;
 
 import net.helinos.moresnow.block.model.BlockModelSnowyFence;
+import net.helinos.moresnow.block.model.BlockModelSnowyFenceThin;
 import net.helinos.moresnow.block.model.BlockModelSnowyPlant;
 import net.helinos.moresnow.block.model.BlockModelSnowySlab;
 import net.helinos.moresnow.block.model.BlockModelSnowyStairs;
@@ -10,7 +11,9 @@ import net.minecraft.client.render.block.color.BlockColorDispatcher;
 import net.minecraft.client.render.block.model.BlockModelDispatcher;
 import net.minecraft.client.render.block.model.BlockModelStandard;
 import net.minecraft.client.render.item.model.ItemModelDispatcher;
+import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.block.Block;
+import net.minecraft.core.block.Blocks;
 import turniplabs.halplibe.helper.ModelHelper;
 import turniplabs.halplibe.util.ModelEntrypoint;
 
@@ -34,6 +37,39 @@ public class MSModels implements ModelEntrypoint {
         ModelHelper.setBlockModel(MSBlocks.SNOWY_PARTIAL, () -> new BlockModelStandard<>(MSBlocks.SNOWY_PARTIAL).setAllTextures(0, "minecraft:block/block_snow"));
         ModelHelper.setBlockModel(MSBlocks.SNOWY_FENCE, () -> new BlockModelSnowyFence<>(MSBlocks.SNOWY_FENCE).setAllTextures(0, "minecraft:block/block_snow"));
         ModelHelper.setBlockModel(MSBlocks.SNOWY_FENCE_PAINTED, () -> new BlockModelSnowyFence<>(MSBlocks.SNOWY_FENCE_PAINTED).setAllTextures(0, "minecraft:block/block_snow"));
+        
+        ModelHelper.setBlockModel(
+            MSBlocks.SNOWY_FENCE_WALLPAPER, 
+            () -> new BlockModelSnowyFenceThin<>(
+                MSBlocks.SNOWY_FENCE_WALLPAPER,
+                Blocks.FENCE_PAPER_WALL.getLogic().getClass(),
+                TextureRegistry.getTexture("minecraft:block/fence_paper/center"),
+                null,
+                null,
+                TextureRegistry.getTexture("minecraft:block/fence_paper/column")
+            ).setAllTextures(0, "minecraft:block/block_snow"));
+
+        ModelHelper.setBlockModel(
+            MSBlocks.SNOWY_FENCE_STEEL, 
+            () -> new BlockModelSnowyFenceThin<>(
+                MSBlocks.SNOWY_FENCE_STEEL,
+                Blocks.FENCE_STEEL.getLogic().getClass(),
+                TextureRegistry.getTexture("minecraft:block/fence_steel/center"),
+                null,
+                TextureRegistry.getTexture("minecraft:block/fence_steel/top"),
+                TextureRegistry.getTexture("minecraft:block/fence_steel/column")
+            ).setAllTextures(0, "minecraft:block/block_snow"));
+
+        ModelHelper.setBlockModel(
+            MSBlocks.SNOWY_FENCE_CHAINLINK, 
+            () -> new BlockModelSnowyFenceThin<>(
+                MSBlocks.SNOWY_FENCE_CHAINLINK,
+                Blocks.FENCE_CHAINLINK.getLogic().getClass(),
+                TextureRegistry.getTexture("minecraft:block/fence_chain/center"),
+                null,
+                TextureRegistry.getTexture("minecraft:block/fence_chain/top"),
+                TextureRegistry.getTexture("minecraft:block/fence_chain/column")
+            ).setAllTextures(0, "minecraft:block/block_snow"));
     }
 
     @Override

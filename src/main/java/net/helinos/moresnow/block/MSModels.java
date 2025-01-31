@@ -4,14 +4,19 @@ import net.helinos.moresnow.block.model.BlockModelSnowyFence;
 import net.helinos.moresnow.block.model.BlockModelSnowyPlant;
 import net.helinos.moresnow.block.model.BlockModelSnowySlab;
 import net.helinos.moresnow.block.model.BlockModelSnowyStairs;
+import net.minecraft.client.render.EntityRenderDispatcher;
+import net.minecraft.client.render.TileEntityRenderDispatcher;
+import net.minecraft.client.render.block.color.BlockColorDispatcher;
+import net.minecraft.client.render.block.model.BlockModelDispatcher;
 import net.minecraft.client.render.block.model.BlockModelStandard;
+import net.minecraft.client.render.item.model.ItemModelDispatcher;
 import net.minecraft.core.block.Block;
 import turniplabs.halplibe.helper.ModelHelper;
 import turniplabs.halplibe.util.ModelEntrypoint;
 
 public class MSModels implements ModelEntrypoint {
     @Override
-	public void initBlockModels() {
+	public void initBlockModels(BlockModelDispatcher dispatcher) {
         ModelHelper.setBlockModel(MSBlocks.SNOWY_PLANT, () -> new BlockModelSnowyPlant<>(MSBlocks.SNOWY_PLANT).setAllTextures(0, "minecraft:block/block_snow"));
         
         for (Block<?> block : MSBlocks.SNOWY_FLOWER_STACKABLES) {
@@ -31,19 +36,15 @@ public class MSModels implements ModelEntrypoint {
         ModelHelper.setBlockModel(MSBlocks.SNOWY_FENCE_PAINTED, () -> new BlockModelSnowyFence<>(MSBlocks.SNOWY_FENCE_PAINTED).setAllTextures(0, "minecraft:block/block_snow"));
     }
 
-	@Override
-	public void initItemModels() {
-	}
+    @Override
+    public void initItemModels(ItemModelDispatcher dispatcher) {}
 
-	@Override
-	public void initEntityModels() {
-	}
+    @Override
+    public void initEntityModels(EntityRenderDispatcher dispatcher) {}
 
-	@Override
-	public void initTileEntityModels() {
-	}
+    @Override
+    public void initTileEntityModels(TileEntityRenderDispatcher dispatcher) {}
 
-	@Override
-	public void initBlockColors() {
-	}
+    @Override
+    public void initBlockColors(BlockColorDispatcher dispatcher) {}
 }

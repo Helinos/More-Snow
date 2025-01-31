@@ -5,8 +5,6 @@ import net.helinos.moresnow.block.MSBlocks;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicFence;
-import net.minecraft.core.block.BlockLogicFenceChainlink;
-import net.minecraft.core.block.BlockLogicFenceSteel;
 import net.minecraft.core.block.BlockLogicFenceThin;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.enums.LightLayer;

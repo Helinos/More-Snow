@@ -26,6 +26,7 @@ import java.util.List;
 import com.llamalad7.mixinextras.lib.apache.commons.ArrayUtils;
 
 import turniplabs.halplibe.helper.BlockBuilder;
+import turniplabs.halplibe.util.toml.Toml;
 
 public class MSBlocks {
 	public static Block<BlockLogicSnowyPlant<?, BlockLogicFlower>> SNOWY_PLANT;
@@ -45,9 +46,14 @@ public class MSBlocks {
 	public static int[] solidIds;
 	public static int[] blockIds;
 
-	public static void init(int minimumID) {
+	private static Toml rawConfig;
+	private static boolean configChanged = false;
+
+	public static void init() {
 		MoreSnow.LOGGER.info("Initializing Blocks.");
 
+		rawConfig = MoreSnow.CONFIG.getRawParsed();
+		
 		ArrayList<Integer> excludedPlantIDs = new ArrayList<>();
 		for (Block<?> block : Blocks.blocksList) {
 			if (
@@ -62,27 +68,31 @@ public class MSBlocks {
 			}
 		}
 
+		String key = "snowy_plant";
 		SNOWY_PLANT = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.BROKEN_BY_FLUIDS, BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy_plant", minimumID++, block -> new BlockLogicSnowyPlant<>(block, BlockLogicFlower.class, excludedPlantIDs));
+				.build(key, getID(key), block -> new BlockLogicSnowyPlant<>(block, BlockLogicFlower.class, excludedPlantIDs));
 
 		for (Block<?> flower : Blocks.blocksList) {
 			if (flower != null && flower.getLogic() instanceof BlockLogicFlowerStackable) {
+				String[] flowerKeys = flower.getKey().split("\\.");
+				key = "snowy_flower_stackable_" + flowerKeys[flowerKeys.length - 1];
 				Block<?> snowyFlowerStackable = new BlockBuilder(MoreSnow.MOD_ID)
 					.setBlockSound(BlockSounds.CLOTH)
 					.setHardness(0.1f)
 					.setUseInternalLight()
 					.setVisualUpdateOnMetadata()
 					.setTags(BlockTags.BROKEN_BY_FLUIDS, BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.NOT_IN_CREATIVE_MENU)
-					.build("snowy_" + flower.getKey(), minimumID++, block -> new BlockLogicSnowyFlowerStackable<>(block, flower.id()));
+					.build(key, getID(key), block -> new BlockLogicSnowyFlowerStackable<>(block, flower.id()));
 				SNOWY_FLOWER_STACKABLES.add(snowyFlowerStackable);
 			}	
 		}
 
+		key = "snowy_slab";
 		SNOWY_SLAB = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
@@ -90,8 +100,9 @@ public class MSBlocks {
 				.setLightOpacity(1)
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy_slab", minimumID++, block -> new BlockLogicSnowySlab<>(block, BlockLogicSlab.class, Collections.singletonList(Blocks.SLAB_PLANKS_PAINTED.id())));
+				.build(key, getID(key), block -> new BlockLogicSnowySlab<>(block, BlockLogicSlab.class, Collections.singletonList(Blocks.SLAB_PLANKS_PAINTED.id())));
 
+		key = "snowy_slab_painted";
 		SNOWY_SLAB_PAINTED = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
@@ -99,11 +110,12 @@ public class MSBlocks {
 				.setLightOpacity(1)
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy_slab_painted", minimumID++, block -> new BlockLogicSnowySlabPainted<>(block, BlockLogicSlabPainted.class));
+				.build(key, getID(key), block -> new BlockLogicSnowySlabPainted<>(block, BlockLogicSlabPainted.class));
 		
 		List<Integer> usedStairIDs = new ArrayList<>();
 		usedStairIDs.add(Blocks.STAIRS_PLANKS_PAINTED.id());
 		for(int index = 1; true; index++) {
+			key = "snowy_stairs_" + index;
 			Block<?> snowyStairs = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
@@ -111,7 +123,7 @@ public class MSBlocks {
 				.setLightOpacity(15)
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy_stairs_" + index, minimumID++, block -> new BlockLogicSnowyStairs<>(block, BlockLogicStairs.class, usedStairIDs));
+				.build(key, getID(key), block -> new BlockLogicSnowyStairs<>(block, BlockLogicStairs.class, usedStairIDs));
 			SNOWY_STAIRS.add(snowyStairs);
 			
 			if (((BlockLogicSnowyStairs<?, ?>) snowyStairs.getLogic()).USED_IDS.size() >= 16) {
@@ -121,6 +133,7 @@ public class MSBlocks {
 			}
 		}
 
+		key = "snowy_stairs_painted";
 		SNOWY_STAIRS_PAINTED = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
@@ -128,48 +141,54 @@ public class MSBlocks {
 				.setLightOpacity(15)
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy.stairs.painted", minimumID++, block -> new BlockLogicSnowyStairsPainted<>(block, BlockLogicStairsPainted.class));
+				.build(key, getID(key), block -> new BlockLogicSnowyStairsPainted<>(block, BlockLogicStairsPainted.class));
 
+		key = "snowy_partial";
 		SNOWY_PARTIAL = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.BROKEN_BY_FLUIDS, BlockTags.PLACE_OVERWRITES, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy.partial", minimumID++, block -> new BlockLogicSnowyPartial<>(block));
+				.build(key, getID(key), block -> new BlockLogicSnowyPartial<>(block));
 
+		key = "snowy_fence";
 		SNOWY_FENCE = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy.fence", minimumID++, block -> new BlockLogicSnowyFence<>(block, BlockLogicFence.class, Collections.singletonList(Blocks.FENCE_PLANKS_OAK_PAINTED.id())));
+				.build(key, getID(key), block -> new BlockLogicSnowyFence<>(block, BlockLogicFence.class, Collections.singletonList(Blocks.FENCE_PLANKS_OAK_PAINTED.id())));
 
+		key = "snowy_fence_painted";
 		SNOWY_FENCE_PAINTED = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy.fence.painted", minimumID++, block -> new BlockLogicSnowyFencePainted<>(block, BlockLogicFencePainted.class));
+				.build(key, getID(key), block -> new BlockLogicSnowyFencePainted<>(block, BlockLogicFencePainted.class));
 
+		key = "snowy_fence_wallpaper";
 		SNOWY_FENCE_WALLPAPER = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy.fence.wall_paper", minimumID++, BlockLogicSnowyFenceWallPaper::new);
+				.build(key, getID(key), BlockLogicSnowyFenceWallPaper::new);
 
+		key = "snowy_fence_steel";
 		SNOWY_FENCE_STEEL = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.CHAINLINK_FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy.fence.steel", minimumID++, BlockLogicSnowyFenceSteel::new);
+				.build(key, getID(key), BlockLogicSnowyFenceSteel::new);
 
+		key = "snowy_fence_chainlink";
 		SNOWY_FENCE_CHAINLINK = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
 				.setBlockSound(BlockSounds.CLOTH)
@@ -177,8 +196,7 @@ public class MSBlocks {
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.CHAINLINK_FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build("snowy.fence.chainlink", minimumID++, BlockLogicSnowyFenceChainlink::new);
-
+				.build(key, getID(key), BlockLogicSnowyFenceChainlink::new);
 
 		blockIds = new int[] {
 			SNOWY_PLANT.id(),
@@ -200,6 +218,12 @@ public class MSBlocks {
 			blockIds,
 			SNOWY_STAIRS.stream().mapToInt(block -> block.id()).toArray()
 		);
+
+		if (configChanged) {
+			MoreSnow.CONFIG.setDefaults(rawConfig);
+			MoreSnow.CONFIG.writeConfig();
+			MoreSnow.CONFIG.loadConfig();
+		}
 
 		MoreSnow.LOGGER.info("Initialized Blocks.");
 	}
@@ -224,7 +248,6 @@ public class MSBlocks {
 		return placed;
 	}
 
-
 	public static boolean tryMakeSnowy(Chunk chunk, int id, int x, int y, int z) {
 		boolean placed = false;
 		for (int whichId : blockIds) {
@@ -234,5 +257,28 @@ public class MSBlocks {
 				break;
 		}
 		return placed;
+	}
+
+	private static int nextBlockID = 0;
+
+	public static int getID(String key) {
+		boolean containsBlock;
+		String category = "BlockIDs.";
+		try {
+			containsBlock = rawConfig.contains(category + key);
+		} catch (NullPointerException e) {
+			containsBlock = false;
+		}
+		
+		if (containsBlock) {
+			return MoreSnow.CONFIG.getInt(category + key);
+		}
+
+		while (Blocks.blocksList[++nextBlockID] != null) {}
+		
+		rawConfig.addEntry(category + key, nextBlockID);
+		configChanged = true;
+
+		return nextBlockID;
 	}
 }

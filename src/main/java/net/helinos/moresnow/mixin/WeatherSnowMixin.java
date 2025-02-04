@@ -105,7 +105,7 @@ public abstract class WeatherSnowMixin extends Weather {
 			
 			if (blockID == Blocks.LAYER_SNOW.id()) {
 				Blocks.LAYER_SNOW.getLogic().accumulate(world, x, y, z);
-			} else {
+			} else if (blockBelowLogic != null) {
 				((BlockLogicSnowy<?>) blockBelowLogic).accumulate(world, x, y - 1, z);
 			}
 
@@ -129,8 +129,6 @@ public abstract class WeatherSnowMixin extends Weather {
 
 	@Inject(method = "doChunkLoadEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/chunk/Chunk;getBlockID(III)I", shift = At.Shift.AFTER, ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void doChunkLoadEffect(World world, Chunk chunk, CallbackInfo callbackInfo, int x, int worldX, int z, int worldZ, int y, Biome biome, int blockId) {
-		int blockIdBelow = chunk.getBlockID(x, y - 1, z);
-
 		if (
 			y < 0 
 			|| y >= world.getHeightBlocks() 
@@ -138,8 +136,12 @@ public abstract class WeatherSnowMixin extends Weather {
 		) {
 			return;
 		}
+ 
+		if (MSBlocks.tryMakeSnowy(chunk, blockId, x, y, z)) {
+			return;
+		}
 
-		MSBlocks.tryMakeSnowy(chunk, blockId, x, y, z);
-		MSBlocks.tryMakeSnowy(chunk, blockIdBelow, x, y - 1, z);
+		int blockIDBelow = chunk.getBlockID(x, y - 1, z);
+		MSBlocks.tryMakeSnowy(chunk, blockIDBelow, x, y - 1, z);
 	}
 }

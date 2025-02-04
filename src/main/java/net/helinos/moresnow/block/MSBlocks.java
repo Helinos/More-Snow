@@ -238,6 +238,10 @@ public class MSBlocks {
 	}
 
 	public static boolean tryMakeSnowy(World world, int id, int x, int y, int z) {
+		if (Blocks.getBlock(id) == null) {
+			return false;
+		}
+
 		boolean placed = false;
 		for (int whichId : blockIds) {
 			BlockLogicSnowy<?> block = (BlockLogicSnowy<?>) Blocks.getBlock(whichId).getLogic();
@@ -249,6 +253,10 @@ public class MSBlocks {
 	}
 
 	public static boolean tryMakeSnowy(Chunk chunk, int id, int x, int y, int z) {
+		if (Blocks.getBlock(id) == null) {
+			return false;
+		}
+		
 		boolean placed = false;
 		for (int whichId : blockIds) {
 			BlockLogicSnowy<?> blockLogic = (BlockLogicSnowy<?>) Blocks.getBlock(whichId).getLogic();

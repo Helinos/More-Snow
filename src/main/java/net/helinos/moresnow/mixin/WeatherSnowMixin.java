@@ -51,12 +51,13 @@ public abstract class WeatherSnowMixin extends Weather {
 		int y = world.findTopSolidBlock(x, z);
 		
 		int blockIDBelow = world.getBlockId(x, y - 1, z);
-		BlockLogic blockBelowLogic = Blocks.getBlock(blockIDBelow).getLogic();
+		Block<?> blockBelow = Blocks.getBlock(blockIDBelow);
+		BlockLogic blockBelowLogic = blockBelow != null ? blockBelow.getLogic() : null;
 		
 		while (blockBelowLogic instanceof BlockLogicFence || blockBelowLogic instanceof BlockLogicFenceThin) {
 			y -= 1;
-			blockIDBelow = world.getBlockId(x, y - 1, z);
-			blockBelowLogic = Blocks.getBlock(blockIDBelow).getLogic();
+			blockBelow = world.getBlock(x, y - 1, z);
+			blockBelowLogic = blockBelow != null ? blockBelow.getLogic() : null;
 		};
 		
 		int blockID = world.getBlockId(x, y, z);

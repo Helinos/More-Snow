@@ -261,7 +261,7 @@ public class MSBlocks {
 
 	private static int nextBlockID = 0;
 
-	public static int getID(String key) {
+	private static int getID(String key) {
 		boolean containsBlock;
 		String category = "BlockIDs.";
 		try {

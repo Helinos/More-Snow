@@ -12,7 +12,7 @@ public class BlockLogicSnowySlabPainted<T extends BlockLogic> extends BlockLogic
 
 	@Override
 	public boolean canReplaceBlock(int id, int metadata) {
-		return id == getStoredBlockId(metadata);
+		return id == getStoredBlockId(metadata) && (metadata & 3) == 0;
 	}
 
 	@Override

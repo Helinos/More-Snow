@@ -67,7 +67,7 @@ public class BlockLogicSnowyPlant<T extends BlockLogic, F extends BlockLogicFlow
 			random.nextInt(256) == 0
 		) {
 			this.dropBlockWithCause(world, EnumDropCause.WORLD, x, y, z, world.getBlockMetadata(x, y, z), null, null);
-			world.setBlockAndMetadataWithNotify(x, y, z, Blocks.LAYER_SNOW.id(), this.getLayers(z) - 1);
+			world.setBlockAndMetadataWithNotify(x, y, z, Blocks.LAYER_SNOW.id(), this.getLayers(metadata) - 1);
 		}
 	}
 

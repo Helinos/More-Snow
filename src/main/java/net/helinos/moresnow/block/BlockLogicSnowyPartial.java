@@ -6,9 +6,9 @@ import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
 
-public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnowy<T> {
+public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnowy<T> implements IBlockLogicSnowyStairs {
 	public BlockLogicSnowyPartial(Block<T> block) {
-		super(block, null, null);
+		super(block, 4, 0, false);
 		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 0.125f, 1.0f);
 	}
 
@@ -37,8 +37,8 @@ public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnow
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
 		Block<?> blockBelow = world.getBlock(x, y - 1, z);
-		if (blockBelow != null && blockBelow.getLogic() instanceof BlockLogicSnowyStairs) {
-			BlockLogicSnowyStairs<?, ?> blockSnowyStairs = (BlockLogicSnowyStairs<?, ?>) blockBelow.getLogic();
+		if (blockBelow != null && blockBelow.getLogic() instanceof BlockLogicSnowyStairsMultiple) {
+			BlockLogicSnowyStairsMultiple<?, ?> blockSnowyStairs = (BlockLogicSnowyStairsMultiple<?, ?>) blockBelow.getLogic();
 			int metadata = world.getBlockMetadata(x, y, z);
 			int belowMetadata = world.getBlockMetadata(x, y - 1, z);
 			int belowLayers = blockSnowyStairs.getLayers(belowMetadata);
@@ -52,6 +52,11 @@ public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnow
 	}
 
 	@Override
+	public int getRotation(int metadata) {
+		return (metadata >> 2) & 0b11;
+	}
+
+	@Override
 	public int getStoredBlockId(int metadata) {
 		return 0;
 	}
@@ -59,10 +64,6 @@ public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnow
 	@Override
 	protected int blockToMetadata(int blockId, int metadata) {
 		return 0;
-	}
-
-	public int getRotation(int metadata) {
-		return (metadata >> 2) & 0b11;
 	}
 
 	@Override
@@ -76,17 +77,7 @@ public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnow
 	}
 
 	@Override
-	public boolean supportsOwnSnow() {
-		return false;
-	}
-
-	@Override
-	public int getMaxLayers() {
-		return 4;
-	};
-
-	@Override
-	public int getLowestLayerHeight() {
+	public int getStoredBlockMetadata(int metadata) {
 		return 0;
 	};
 }

@@ -6,8 +6,8 @@ import net.minecraft.core.block.BlockLogicFencePainted;
 import net.minecraft.core.block.Blocks;
 
 public class BlockLogicSnowyFencePainted<T extends BlockLogic> extends BlockLogicSnowyFence<T, BlockLogicFencePainted> {
-    public BlockLogicSnowyFencePainted(Block<T> block, Class<BlockLogicFencePainted> blockLogic) {
-        super(block, blockLogic, null);
+    public BlockLogicSnowyFencePainted(Block<T> block) {
+        super(block);
     }
 
     @Override

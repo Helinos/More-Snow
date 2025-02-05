@@ -5,15 +5,11 @@ import net.minecraft.core.sound.BlockSounds;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicCropsPumpkin;
 import net.minecraft.core.block.BlockLogicCropsWheat;
-import net.minecraft.core.block.BlockLogicFence;
-import net.minecraft.core.block.BlockLogicFencePainted;
 import net.minecraft.core.block.BlockLogicFlower;
 import net.minecraft.core.block.BlockLogicFlowerStackable;
 import net.minecraft.core.block.BlockLogicSaplingBase;
 import net.minecraft.core.block.BlockLogicSlab;
-import net.minecraft.core.block.BlockLogicSlabPainted;
 import net.minecraft.core.block.BlockLogicStairs;
-import net.minecraft.core.block.BlockLogicStairsPainted;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.tag.BlockTags;
 import net.minecraft.core.world.World;
@@ -110,7 +106,7 @@ public class MSBlocks {
 				.setLightOpacity(1)
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build(key, getID(key), block -> new BlockLogicSnowySlabPainted<>(block, BlockLogicSlabPainted.class));
+				.build(key, getID(key), block -> new BlockLogicSnowySlabPainted<>(block));
 		
 		List<Integer> usedStairIDs = new ArrayList<>();
 		usedStairIDs.add(Blocks.STAIRS_PLANKS_PAINTED.id());
@@ -123,11 +119,11 @@ public class MSBlocks {
 				.setLightOpacity(15)
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build(key, getID(key), block -> new BlockLogicSnowyStairs<>(block, BlockLogicStairs.class, usedStairIDs));
+				.build(key, getID(key), block -> new BlockLogicSnowyStairsMultiple<>(block, BlockLogicStairs.class, usedStairIDs));
 			SNOWY_STAIRS.add(snowyStairs);
 			
-			if (((BlockLogicSnowyStairs<?, ?>) snowyStairs.getLogic()).USED_IDS.size() >= 16) {
-				usedStairIDs.addAll(((BlockLogicSnowyStairs<?, ?>) snowyStairs.getLogic()).USED_IDS);
+			if (((BlockLogicSnowyStairsMultiple<?, ?>) snowyStairs.getLogic()).USED_IDS.size() >= 16) {
+				usedStairIDs.addAll(((BlockLogicSnowyStairsMultiple<?, ?>) snowyStairs.getLogic()).USED_IDS);
 			} else {
 				break;
 			}
@@ -141,7 +137,7 @@ public class MSBlocks {
 				.setLightOpacity(15)
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build(key, getID(key), block -> new BlockLogicSnowyStairsPainted<>(block, BlockLogicStairsPainted.class));
+				.build(key, getID(key), block -> new BlockLogicSnowyStairsPainted<>(block));
 
 		key = "snowy_partial";
 		SNOWY_PARTIAL = new BlockBuilder(MoreSnow.MOD_ID)
@@ -150,7 +146,7 @@ public class MSBlocks {
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.BROKEN_BY_FLUIDS, BlockTags.PLACE_OVERWRITES, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build(key, getID(key), block -> new BlockLogicSnowyPartial<>(block));
+				.build(key, getID(key), BlockLogicSnowyPartial::new);
 
 		key = "snowy_fence";
 		SNOWY_FENCE = new BlockBuilder(MoreSnow.MOD_ID)
@@ -159,7 +155,7 @@ public class MSBlocks {
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build(key, getID(key), block -> new BlockLogicSnowyFence<>(block, BlockLogicFence.class, Collections.singletonList(Blocks.FENCE_PLANKS_OAK_PAINTED.id())));
+				.build(key, getID(key), BlockLogicSnowyFence::new);
 
 		key = "snowy_fence_painted";
 		SNOWY_FENCE_PAINTED = new BlockBuilder(MoreSnow.MOD_ID)
@@ -168,7 +164,7 @@ public class MSBlocks {
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
-				.build(key, getID(key), block -> new BlockLogicSnowyFencePainted<>(block, BlockLogicFencePainted.class));
+				.build(key, getID(key), BlockLogicSnowyFencePainted::new);
 
 		key = "snowy_fence_wallpaper";
 		SNOWY_FENCE_WALLPAPER = new BlockBuilder(MoreSnow.MOD_ID)

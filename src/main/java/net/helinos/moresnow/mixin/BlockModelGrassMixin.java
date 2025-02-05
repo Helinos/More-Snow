@@ -20,7 +20,7 @@ public class BlockModelGrassMixin {
 		}
 
 		BlockLogicSnowy<?> logic = (BlockLogicSnowy<?>) block.getLogic();
-		if (logic.supportsOwnSnow()) {
+		if (logic.getSupportsOwnSnow()) {
 			return Material.stone;
 		} else {
 			return Material.topSnow;

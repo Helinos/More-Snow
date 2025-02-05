@@ -1,7 +1,6 @@
 package net.helinos.moresnow.block;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.core.block.Block;
@@ -14,11 +13,11 @@ import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
 
-public class BlockLogicSnowyPlant<T extends BlockLogic, F extends BlockLogicFlower> extends BlockLogicSnowy<T> {
+public class BlockLogicSnowyPlant<T extends BlockLogic, F extends BlockLogicFlower> extends BlockLogicSnowyMultiple<T> implements IBlockLogicPlant {
 	public boolean killedByWeather;
 	
 	public BlockLogicSnowyPlant(Block<T> block, Class<F> blockLogic, ArrayList<Integer> excludedIds) {
-		super(block, blockLogic, excludedIds);
+		super(block, blockLogic, excludedIds, 8, 0, false, 3, 0b00001111);
 		block.setTicking(true);
 	}
 
@@ -31,26 +30,9 @@ public class BlockLogicSnowyPlant<T extends BlockLogic, F extends BlockLogicFlow
 	}
 
 	@Override
-	public int getStoredBlockId(int metadata) {
-		int blockKey = (metadata >> 3) & 0b00001111;
-		return this.METADATA_TO_BLOCK_ID.getOrDefault(blockKey, 0);
-	}
-
-	@Override
     public int getStoredBlockMetadata(int metadata) {
         return (metadata) & 0b10000000;
     }
-
-	@Override
-	protected int blockToMetadata(int blockId, int metadata) {
-		for (Map.Entry<Integer, Integer> entry : this.METADATA_TO_BLOCK_ID.entrySet()) {
-			if (entry.getValue() == blockId) {
-				return entry.getKey() << 3;
-			}
-		}
-
-		return 0;
-	}
 
 	@Override
 	public void updateTick(World world, int x, int y, int z, Random random) {
@@ -71,8 +53,13 @@ public class BlockLogicSnowyPlant<T extends BlockLogic, F extends BlockLogicFlow
 		}
 	}
 
+	@Override
 	public boolean getKilledByWeather(int metadata) {
 		int blockID = this.getStoredBlockId(metadata);
+		return doGetKilledByWeather(blockID);
+	}
+
+	public static boolean doGetKilledByWeather(int blockID) {
 		Block<?> block = Blocks.getBlock(blockID);
 		if (block != null && block.getLogic() instanceof BlockLogicFlower) {
 			return ((BlockLogicFlower) block.getLogic()).killedByWeather;
@@ -88,11 +75,6 @@ public class BlockLogicSnowyPlant<T extends BlockLogic, F extends BlockLogicFlow
   
 	@Override
 	public boolean isCubeShaped() {
-		return false;
-	}
-
-	@Override
-	public boolean supportsOwnSnow() {
 		return false;
 	}
 }

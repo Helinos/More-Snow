@@ -2,7 +2,7 @@ package net.helinos.moresnow.mixin;
 
 import net.helinos.moresnow.block.BlockLogicSnowy;
 import net.helinos.moresnow.block.BlockLogicSnowyPlant;
-import net.helinos.moresnow.block.BlockLogicSnowyStairs;
+import net.helinos.moresnow.block.BlockLogicSnowyStairsMultiple;
 import net.helinos.moresnow.block.MSBlocks;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
@@ -61,7 +61,7 @@ public class ItemBlockLayerMixin {
 				}
 			} else if (ArrayUtils.contains(MSBlocks.blockIds, blockId)) {
 				if ((newMetadata & blockSnowy.getMaxLayers() - 1) != 0) {
-					if (block.getLogic() instanceof BlockLogicSnowyStairs && world.getBlockId(blockX, blockY + 1, blockZ) == 0) {
+					if (block.getLogic() instanceof BlockLogicSnowyStairsMultiple && world.getBlockId(blockX, blockY + 1, blockZ) == 0) {
 						world.setBlockAndMetadataWithNotify(blockX, blockY + 1, blockZ, MSBlocks.SNOWY_PARTIAL.id(), newMetadata & 0b1111);
 					}
 					world.setBlockAndMetadataWithNotify(blockX, blockY, blockZ, block.id(), newMetadata);

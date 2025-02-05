@@ -2,12 +2,11 @@ package net.helinos.moresnow.block;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
-import net.minecraft.core.block.BlockLogicStairsPainted;
 import net.minecraft.core.block.Blocks;
 
-public class BlockLogicSnowyStairsPainted<T extends BlockLogic> extends BlockLogicSnowyStairs<T, BlockLogicStairsPainted> {
-	public BlockLogicSnowyStairsPainted(Block<T> block, Class<BlockLogicStairsPainted> blockLogic) {
-		super(block, blockLogic, null);
+public class BlockLogicSnowyStairsPainted<T extends BlockLogic> extends BlockLogicSnowy<T> implements IBlockLogicSnowyStairs {
+	public BlockLogicSnowyStairsPainted(Block<T> block) {
+		super(block, 4, 4, true);
 	}
 
 	@Override
@@ -30,5 +29,10 @@ public class BlockLogicSnowyStairsPainted<T extends BlockLogic> extends BlockLog
 	protected int blockToMetadata(int blockId, int metadata) {
 		int rotation = (metadata & 0b11) << 2;
 		return (metadata & 0b11110000) | rotation;
+	}
+
+	@Override
+	public int getRotation(int metadata) {
+		return (metadata >> 2) & 0b11;
 	}
 }

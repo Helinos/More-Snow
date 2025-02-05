@@ -15,7 +15,7 @@ public abstract class BlockLogicSnowyFenceThin<T extends BlockLogic, F extends B
     private final Class<F> storedBlockLogic;
     
     public BlockLogicSnowyFenceThin(Block<T> block, int storedBlockID, Class<F> storedBlockLogic) {
-        super(block, null, null);
+        super(block, 8, 0, false);
         this.setBlockBounds(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
         this.storedBlockID = storedBlockID;
         this.storedBlockLogic = storedBlockLogic;
@@ -137,9 +137,4 @@ public abstract class BlockLogicSnowyFenceThin<T extends BlockLogic, F extends B
     public boolean isCubeShaped() {
         return false;
     }
-
-    @Override
-	public boolean supportsOwnSnow() {
-		return false;
-	}
 }

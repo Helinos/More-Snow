@@ -6,7 +6,6 @@ import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
@@ -14,8 +13,8 @@ import net.minecraft.core.block.BlockLogicFence;
 import net.minecraft.core.block.Blocks;
 
 public class BlockLogicSnowyFence<T extends BlockLogic, F extends BlockLogicFence> extends BlockLogicSnowy<T> {
-    public BlockLogicSnowyFence(Block<T> block, Class<F> blockLogic, List<Integer> excludedIds) {
-        super(block, blockLogic, excludedIds);
+    public BlockLogicSnowyFence(Block<T> block) {
+        super(block, 8, 0, false);
         this.setBlockBounds(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
     }
 
@@ -65,7 +64,17 @@ public class BlockLogicSnowyFence<T extends BlockLogic, F extends BlockLogicFenc
     }
 
     @Override
-	public boolean supportsOwnSnow() {
-		return false;
-	}
+    public int getStoredBlockMetadata(int metadata) {
+        return 0;
+    }
+
+    @Override
+    public int getStoredBlockId(int metadata) {
+        return Blocks.FENCE_PLANKS_OAK.id();
+    }
+
+    @Override
+    protected int blockToMetadata(int blockId, int metadata) {
+        return 0;
+    }
 }

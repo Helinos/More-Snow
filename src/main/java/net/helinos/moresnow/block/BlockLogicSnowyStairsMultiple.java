@@ -14,17 +14,18 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class BlockLogicSnowyStairs<T extends BlockLogic, S extends BlockLogicStairs> extends BlockLogicSnowy<T> {
-	public BlockLogicSnowyStairs(Block<T> block, Class<S> blockLogic, List<Integer> excludedIds) {
-		super(block, blockLogic, excludedIds);
+public class BlockLogicSnowyStairsMultiple<T extends BlockLogic, S extends BlockLogicStairs> extends BlockLogicSnowyMultiple<T> implements IBlockLogicSnowyStairs {
+	public BlockLogicSnowyStairsMultiple(Block<T> block, Class<S> blockLogic, List<Integer> excludedIds) {
+		super(block, blockLogic, excludedIds, 4, 4, true, 4, 0b00001111);
 		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	@Override
 	protected Map<Integer, Integer> initMetadataToBlockId(Class<?> blockLogic, List<Integer> excludedIds) {
 		Hashtable<Integer, Integer> tmp = new Hashtable<>();
+		int metadataID = 0;
 		for (Block<?> b : Blocks.blocksList) {
-			if (this.metadataID == 16) {
+			if (metadataID == 16) {
 				break;
 			}
 			if (b == null)
@@ -32,7 +33,7 @@ public class BlockLogicSnowyStairs<T extends BlockLogic, S extends BlockLogicSta
 			int id = b.id();
 			if (!blockLogic.isInstance(b.getLogic()) || excludedIds.contains(id))
 				continue;
-			tmp.put(this.metadataID++, id);
+			tmp.put(metadataID++, id);
 		}
 		return Collections.unmodifiableMap(tmp);
 	}
@@ -117,7 +118,7 @@ public class BlockLogicSnowyStairs<T extends BlockLogic, S extends BlockLogicSta
 
 	@Override
 	public int getStoredBlockMetadata(int metadata) {
-		return getRotation(metadata);
+		return this.getRotation(metadata);
 	}
 
 	@Override
@@ -125,6 +126,7 @@ public class BlockLogicSnowyStairs<T extends BlockLogic, S extends BlockLogicSta
 		return (metadata << 2) | super.blockToMetadata(blockId, metadata);
 	}
 
+	@Override
 	public int getRotation(int metadata) {
 		return (metadata >> 2) & 0b11;
 	}
@@ -138,19 +140,4 @@ public class BlockLogicSnowyStairs<T extends BlockLogic, S extends BlockLogicSta
 	public boolean isCubeShaped() {
 		return false;
 	}
-
-	@Override
-	public boolean supportsOwnSnow() {
-		return true;
-	}
-
-	@Override
-	public int getMaxLayers() {
-		return 4;
-	};
-
-	@Override
-	public int getLowestLayerHeight() {
-		return 4;
-	};
 }

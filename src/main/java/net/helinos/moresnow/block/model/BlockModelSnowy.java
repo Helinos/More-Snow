@@ -32,8 +32,7 @@ public abstract class BlockModelSnowy<T extends BlockLogic> extends BlockModelSt
         int storedBlockMetadata = logic.getStoredBlockMetadata(metadata);
 
         try {
-            return BlockModelDispatcher.getInstance().getDispatch(storedBlock).getBlockTextureFromSideAndMetadata(side,
-                    storedBlockMetadata);
+            return BlockModelDispatcher.getInstance().getDispatch(storedBlock).getBlockTextureFromSideAndMetadata(side, storedBlockMetadata);
         } catch (NullPointerException _exception) {
             return BLOCK_TEXTURE_UNASSIGNED;
         }

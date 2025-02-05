@@ -2,12 +2,11 @@ package net.helinos.moresnow.block;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
-import net.minecraft.core.block.BlockLogicSlabPainted;
 import net.minecraft.core.block.Blocks;
 
-public class BlockLogicSnowySlabPainted<T extends BlockLogic> extends BlockLogicSnowySlab<T, BlockLogicSlabPainted> {
-	public BlockLogicSnowySlabPainted(Block<T> block, Class<BlockLogicSlabPainted> blockLogic) {
-		super(block, blockLogic, null);
+public class BlockLogicSnowySlabPainted<T extends BlockLogic> extends BlockLogicSnowy<T> {
+	public BlockLogicSnowySlabPainted(Block<T> block) {
+		super(block, 4, 4, true);
 	}
 
 	@Override
@@ -28,5 +27,10 @@ public class BlockLogicSnowySlabPainted<T extends BlockLogic> extends BlockLogic
 	@Override
 	protected int blockToMetadata(int blockId, int metadata) {
 		return metadata;
+	}
+
+	@Override
+	public boolean isSolidRender() {
+		return false;
 	}
 }

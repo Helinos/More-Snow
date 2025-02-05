@@ -1,5 +1,9 @@
 package net.helinos.moresnow.block;
 
+import java.util.Random;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicLeavesBase;
@@ -15,63 +19,55 @@ import net.minecraft.core.item.Items;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.chunk.Chunk;
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
-	protected final Map<Integer, Integer> METADATA_TO_BLOCK_ID;
-	protected final List<Integer> USED_IDS;
-	protected int metadataID = 0;
+    private final int maxLayers;
+    private final int lowestLayerHeight;
+    private final boolean supportsOwnSnow;
 
-	public BlockLogicSnowy(Block<T> block, Class<?> blockLogicClass, List<Integer> excludedIds) {
-		super(block, Material.snow);
-		if (excludedIds != null) {
-			this.METADATA_TO_BLOCK_ID = this.initMetadataToBlockId(blockLogicClass, excludedIds);
-		} else {
-			this.METADATA_TO_BLOCK_ID = Collections.unmodifiableMap(new HashMap<Integer, Integer>());
-		}
-		
+    public BlockLogicSnowy(Block<T> block, int maxLayers, int lowestLayerHeight, boolean supportsOwnSnow) {
+        super(block, Material.snow);
+        
+		this.maxLayers = maxLayers;
+        this.lowestLayerHeight = lowestLayerHeight;
+        this.supportsOwnSnow = supportsOwnSnow;
+    }
 
-		if (METADATA_TO_BLOCK_ID != null) {
-			this.USED_IDS = METADATA_TO_BLOCK_ID.values().stream().map(i -> i).collect(Collectors.toList());
-		} else {
-			this.USED_IDS = new ArrayList<>();
-		}
-	}
-
-	protected Map<Integer, Integer> initMetadataToBlockId(Class<?> blockLogic, List<Integer> excludedIds) {
-		Hashtable<Integer, Integer> tmp = new Hashtable<>();
-		for (Block<?> b : Blocks.blocksList) {
-			if (b == null)
-				continue;
-			int id = b.id();
-			if (!blockLogic.isInstance(b.getLogic()) || excludedIds.contains(id))
-				continue;
-			tmp.put(this.metadataID++, id);
-		}
-		return Collections.unmodifiableMap(tmp);
-	}
-	
-	/**
+    /**
 	 * Check a given block id with given metadata is capable of being replaced by a
 	 * snow covered block.
 	 */
-	public boolean canReplaceBlock(int id, int metadata) {
-		return this.METADATA_TO_BLOCK_ID.containsValue(id);
+    public boolean canReplaceBlock(int id, int metadata) {
+        return id == getStoredBlockId(metadata);
+    }
+
+    public abstract int getStoredBlockMetadata(int metadata);
+
+    public abstract int getStoredBlockId(int metadata);
+
+    protected abstract int blockToMetadata(int blockId, int metadata);
+
+    public int getLayers(int metadata) {
+		return (metadata & (this.getMaxLayers() - 1)) + 1;
 	}
 
-	/**
+    public int getMaxLayers() {
+		return this.maxLayers;
+	};
+
+	public int getLowestLayerHeight() {
+		return this.lowestLayerHeight;
+	};
+
+    public int getRelativeLayers(int metadata) {
+		int layers = this.getLayers(metadata);
+		return layers + this.getLowestLayerHeight();
+	}
+
+    /**
 	 * Check if the block can support having snow on it.
 	 * 
-	 * @see BlockLogicSnowy#canSupportSnow(Chunk, int, int, int)
+	 * @see BlockLogicSnowyMultiple#canSupportSnow(Chunk, int, int, int)
 	 */
 	public boolean canSupportSnow(World world, int x, int y, int z) {
 		int belowID = world.getBlockId(x, y - 1, z);
@@ -93,7 +89,7 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 	}
 
 	private boolean canSupportSnow(int belowID, Material belowMaterial) {
-		if (this.supportsOwnSnow()) {
+		if (this.supportsOwnSnow) {
 			return true;
 		}
 
@@ -108,7 +104,11 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 		}
 	}
 
-	/**
+    public boolean getSupportsOwnSnow() {
+        return this.supportsOwnSnow;
+    }
+
+    /**
 	 * Place a snow covered variant of a block at the given coordinates.
 	 *
 	 * @param id The block id to be "stored" inside the snow covered block
@@ -275,7 +275,7 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 		return null;
 	}
 
-	@Override
+    @Override
 	public void updateTick(World world, int x, int y, int z, Random random) {
 		if (world.getSavedLightValue(LightLayer.Block, x, y, z) > 11) {
 			int metadata = world.getBlockMetadata(x, y, z);
@@ -293,42 +293,4 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 			this.removeSnow(world, metadata, x, y, z);
 		}
 	}
-
-	public int getLayers(int metadata) {
-		return (metadata & (this.getMaxLayers() - 1)) + 1;
-	}
-
-	public int getRelativeLayers(int metadata) {
-		int layers = getLayers(metadata);
-		return layers + this.getLowestLayerHeight();
-	}
-
-	public int getStoredBlockId(int metadata) {
-		int blockKey = (metadata >> 4) & 0b00001111;
-		return this.METADATA_TO_BLOCK_ID.getOrDefault(blockKey, 0);
-	}
-
-	public int getStoredBlockMetadata(int metadata) {
-		return 0;
-	}
-
-	protected int blockToMetadata(int blockId, int metadata) {
-		for (Map.Entry<Integer, Integer> entry : this.METADATA_TO_BLOCK_ID.entrySet()) {
-			if (entry.getValue() == blockId) {
-				return entry.getKey() << 4;
-			}
-		}
-
-		return 0;
-	}
-
-	public abstract boolean supportsOwnSnow();
-
-	public int getMaxLayers() {
-		return 8;
-	};
-
-	public int getLowestLayerHeight() {
-		return 0;
-	};
 }

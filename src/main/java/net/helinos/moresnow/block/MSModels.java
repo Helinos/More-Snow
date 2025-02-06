@@ -1,6 +1,7 @@
 package net.helinos.moresnow.block;
 
 import net.helinos.moresnow.block.model.BlockModelSnowyFence;
+import net.helinos.moresnow.block.model.BlockModelSnowyFenceGate;
 import net.helinos.moresnow.block.model.BlockModelSnowyFenceThin;
 import net.helinos.moresnow.block.model.BlockModelSnowyPlant;
 import net.helinos.moresnow.block.model.BlockModelSnowySlab;
@@ -70,6 +71,12 @@ public class MSModels implements ModelEntrypoint {
                 TextureRegistry.getTexture("minecraft:block/fence_chain/top"),
                 TextureRegistry.getTexture("minecraft:block/fence_chain/column")
             ).setAllTextures(0, "minecraft:block/block_snow"));
+
+        ModelHelper.setBlockModel(MSBlocks.SNOWY_FENCE_GATE, () -> new BlockModelSnowyFenceGate<>(MSBlocks.SNOWY_FENCE_GATE).setAllTextures(0, "minecraft:block/block_snow"));
+    
+        for (Block<?> block : MSBlocks.SNOWY_FENCE_GATES_PAINTED) {
+            ModelHelper.setBlockModel(block, () -> new BlockModelSnowyFenceGate<>(block).setAllTextures(0, "minecraft:block/block_snow"));
+        }
     }
 
     @Override

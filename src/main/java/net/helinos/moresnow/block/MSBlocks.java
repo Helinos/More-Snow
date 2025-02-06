@@ -2,6 +2,7 @@ package net.helinos.moresnow.block;
 
 import net.helinos.moresnow.MoreSnow;
 import net.minecraft.core.sound.BlockSounds;
+import net.minecraft.core.util.helper.DyeColor;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicCropsPumpkin;
 import net.minecraft.core.block.BlockLogicCropsWheat;
@@ -37,6 +38,8 @@ public class MSBlocks {
 	public static Block<?> SNOWY_FENCE_WALLPAPER;
 	public static Block<?> SNOWY_FENCE_STEEL;
 	public static Block<?> SNOWY_FENCE_CHAINLINK;
+	public static Block<?> SNOWY_FENCE_GATE;
+	public static ArrayList<Block<?>> SNOWY_FENCE_GATES_PAINTED = new ArrayList<>();
 
 	public static int[] transparentIds;
 	public static int[] solidIds;
@@ -187,12 +190,32 @@ public class MSBlocks {
 		key = "snowy_fence_chainlink";
 		SNOWY_FENCE_CHAINLINK = new BlockBuilder(MoreSnow.MOD_ID)
 				.setBlockSound(BlockSounds.CLOTH)
-				.setBlockSound(BlockSounds.CLOTH)
 				.setHardness(0.1f)
 				.setUseInternalLight()
 				.setVisualUpdateOnMetadata()
 				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.CHAINLINK_FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
 				.build(key, getID(key), BlockLogicSnowyFenceChainlink::new);
+
+		key = "snowy_fence_gate";
+		SNOWY_FENCE_GATE = new BlockBuilder(MoreSnow.MOD_ID)
+			.setBlockSound(BlockSounds.CLOTH)
+			.setHardness(0.1f)
+			.setUseInternalLight()
+			.setVisualUpdateOnMetadata()
+			.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
+			.build(key, getID(key), block -> new BlockLogicSnowyFenceGate<>(block, null));
+
+		for (DyeColor color : DyeColor.blockOrderedColors()) {
+			key = "snowy_fence_gate_" + color.colorID;
+			Block<?> snowyFenceGatePainted = new BlockBuilder(MoreSnow.MOD_ID)
+				.setBlockSound(BlockSounds.CLOTH)
+				.setHardness(0.1f)
+				.setUseInternalLight()
+				.setVisualUpdateOnMetadata()
+				.setTags(BlockTags.MINEABLE_BY_SHOVEL, BlockTags.OVERRIDE_STEPSOUND, BlockTags.FENCES_CONNECT, BlockTags.NOT_IN_CREATIVE_MENU)
+				.build(key, getID(key), block -> new BlockLogicSnowyFenceGate<>(block, color));
+			SNOWY_FENCE_GATES_PAINTED.add(snowyFenceGatePainted);
+		}
 
 		blockIds = new int[] {
 			SNOWY_PLANT.id(),
@@ -204,7 +227,8 @@ public class MSBlocks {
 			SNOWY_FENCE_PAINTED.id(),
 			SNOWY_FENCE_WALLPAPER.id(),
 			SNOWY_FENCE_STEEL.id(),
-			SNOWY_FENCE_CHAINLINK.id()
+			SNOWY_FENCE_CHAINLINK.id(),
+			SNOWY_FENCE_GATE.id()
 		};
 		blockIds = ArrayUtils.addAll(
 			blockIds,
@@ -213,6 +237,10 @@ public class MSBlocks {
 		blockIds = ArrayUtils.addAll(
 			blockIds,
 			SNOWY_STAIRS.stream().mapToInt(block -> block.id()).toArray()
+		);
+		blockIds = ArrayUtils.addAll(
+			blockIds, 
+			SNOWY_FENCE_GATES_PAINTED.stream().mapToInt(block -> block.id()).toArray()
 		);
 
 		if (configChanged) {

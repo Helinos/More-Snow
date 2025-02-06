@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class BlockLogicSnowyStairsMultiple<T extends BlockLogic, S extends BlockLogicStairs> extends BlockLogicSnowyMultiple<T> implements IBlockLogicSnowyStairs {
+public class BlockLogicSnowyStairsMultiple<T extends BlockLogic, S extends BlockLogicStairs> extends BlockLogicSnowyMultiple<T> implements IBlockLogicSnowyStairs, IBlockLogicSnowyRotation {
 	public BlockLogicSnowyStairsMultiple(Block<T> block, Class<S> blockLogic, List<Integer> excludedIds) {
 		super(block, blockLogic, excludedIds, 4, 4, true, 4, 0b00001111);
 		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);

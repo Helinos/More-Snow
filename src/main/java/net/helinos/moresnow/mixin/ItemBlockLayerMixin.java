@@ -2,7 +2,7 @@ package net.helinos.moresnow.mixin;
 
 import net.helinos.moresnow.block.BlockLogicSnowy;
 import net.helinos.moresnow.block.BlockLogicSnowyPlant;
-import net.helinos.moresnow.block.BlockLogicSnowyStairsMultiple;
+import net.helinos.moresnow.block.IBlockLogicSnowyStairs;
 import net.helinos.moresnow.block.MSBlocks;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
@@ -15,7 +15,6 @@ import net.minecraft.core.item.block.ItemBlockLayer;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
-import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -42,7 +41,7 @@ public class ItemBlockLayerMixin {
 		// Incrementing layer count on snow covered blocks with the snow layer item
 		if (itemstack.itemID == Blocks.LAYER_SNOW.id() && side == Side.TOP && block.getLogic() instanceof BlockLogicSnowy) {
 			BlockLogicSnowy<?> blockSnowy = (BlockLogicSnowy<?>) block.getLogic();
-			int newMetadata = metadata + 1;
+			int newLayers = blockSnowy.getLayers(metadata) + 1;
 
 			AABB bbBox = AABB.getTemporaryBB(blockX, blockY, blockZ, block.getBounds().maxX, block.getBounds().maxY + 0.125f, block.getBounds().maxZ);
 			if (!world.checkIfAABBIsClear(bbBox)) {
@@ -51,22 +50,20 @@ public class ItemBlockLayerMixin {
 			}
 
 			if (block.getLogic() instanceof BlockLogicSnowyPlant) {
-				if ((newMetadata & blockSnowy.getMaxLayers() - 1) < blockSnowy.getMaxLayers() - 1) {
-					world.setBlockAndMetadataWithNotify(blockX, blockY, blockZ, block.id(), newMetadata);
+				if (newLayers <= blockSnowy.getMaxLayers()) {
+					world.setBlockAndMetadataWithNotify(blockX, blockY, blockZ, block.id(), (metadata & ~(blockSnowy.getMaxLayers() - 1)) | newLayers - 1);
 				} else {
 					int storedID = ((BlockLogicSnowyPlant<?, ?>) block.getLogic()).getStoredBlockId(metadata);
 					block.getLogic().dropBlockWithCause(world, EnumDropCause.WORLD, blockX, blockY, blockZ, metadata, null, null);
 					world.playBlockSoundEffect(player, blockX, blockY, blockZ, Blocks.getBlock(storedID), EnumBlockSoundEffectType.DIG);
 					world.setBlockWithNotify(blockX, blockY, blockZ, Blocks.BLOCK_SNOW.id());
 				}
-			} else if (ArrayUtils.contains(MSBlocks.blockIds, blockId)) {
-				if ((newMetadata & blockSnowy.getMaxLayers() - 1) != 0) {
-					if (block.getLogic() instanceof BlockLogicSnowyStairsMultiple && world.getBlockId(blockX, blockY + 1, blockZ) == 0) {
-						world.setBlockAndMetadataWithNotify(blockX, blockY + 1, blockZ, MSBlocks.SNOWY_PARTIAL.id(), newMetadata & 0b1111);
+			} else {
+				if (newLayers <= blockSnowy.getMaxLayers()) {
+					if (block.getLogic() instanceof IBlockLogicSnowyStairs && world.getBlock(blockX, blockY + 1, blockZ) == null) {
+						world.setBlockAndMetadataWithNotify(blockX, blockY + 1, blockZ, MSBlocks.SNOWY_PARTIAL.id(), newLayers - 1);
 					}
-					world.setBlockAndMetadataWithNotify(blockX, blockY, blockZ, block.id(), newMetadata);
-				} else if (Blocks.LAYER_SNOW.getLogic().canPlaceBlockAt(world, blockX, blockY + 1, blockZ)) {
-					world.setBlockAndMetadataWithNotify(blockX, blockY + 1, blockZ, Blocks.LAYER_SNOW.id(), 0);
+					world.setBlockAndMetadataWithNotify(blockX, blockY, blockZ, block.id(), (metadata & ~(blockSnowy.getMaxLayers() - 1)) | newLayers - 1);
 				} else {
 					return;
 				}

@@ -6,7 +6,7 @@ import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
 
-public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnowy<T> implements IBlockLogicSnowyStairs {
+public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnowy<T> implements IBlockLogicSnowyRotation {
 	public BlockLogicSnowyPartial(Block<T> block) {
 		super(block, 4, 0, false);
 		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 0.125f, 1.0f);
@@ -37,8 +37,8 @@ public class BlockLogicSnowyPartial<T extends BlockLogic> extends BlockLogicSnow
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
 		Block<?> blockBelow = world.getBlock(x, y - 1, z);
-		if (blockBelow != null && blockBelow.getLogic() instanceof BlockLogicSnowyStairsMultiple) {
-			BlockLogicSnowyStairsMultiple<?, ?> blockSnowyStairs = (BlockLogicSnowyStairsMultiple<?, ?>) blockBelow.getLogic();
+		if (blockBelow != null && blockBelow.getLogic() instanceof IBlockLogicSnowyStairs) {
+			IBlockLogicSnowyStairs blockSnowyStairs = (IBlockLogicSnowyStairs) blockBelow.getLogic();
 			int metadata = world.getBlockMetadata(x, y, z);
 			int belowMetadata = world.getBlockMetadata(x, y - 1, z);
 			int belowLayers = blockSnowyStairs.getLayers(belowMetadata);

@@ -1,7 +1,7 @@
 package net.helinos.moresnow.block.model;
 
 import net.helinos.moresnow.block.BlockLogicSnowy;
-import net.helinos.moresnow.block.IBlockLogicSnowyStairs;
+import net.helinos.moresnow.block.IBlockLogicSnowyRotation;
 import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
@@ -19,7 +19,7 @@ public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy
         // Render the stairs
         boolean somethingRendered = false;
         BlockLogicSnowy<?> logic = (BlockLogicSnowy<?>) this.block.getLogic();
-        int horizontalRotation = ((IBlockLogicSnowyStairs) logic).getRotation(metadata);
+        int horizontalRotation = ((IBlockLogicSnowyRotation) logic).getRotation(metadata);
 
         AABB bounds = AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
         if (horizontalRotation == 0) {

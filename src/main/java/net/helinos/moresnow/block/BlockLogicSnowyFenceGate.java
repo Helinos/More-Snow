@@ -108,7 +108,7 @@ public class BlockLogicSnowyFenceGate<T extends BlockLogic> extends BlockLogicSn
 
     @Override
     protected int blockToMetadata(int blockId, int metadata) {
-        return 0;
+        return (metadata & 0b111) << 3;
     }
 
     @Override

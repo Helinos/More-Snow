@@ -1,6 +1,5 @@
 package net.helinos.moresnow.mixin;
 
-import net.helinos.moresnow.MoreSnow;
 import net.helinos.moresnow.block.BlockLogicSnowy;
 import net.helinos.moresnow.block.MSBlocks;
 import net.minecraft.core.block.Block;

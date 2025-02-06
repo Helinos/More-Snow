@@ -16,7 +16,7 @@ public class BlockLogicSnowyFlowerStackable<T extends BlockLogic> extends BlockL
 	private int storedBlockID;
 	
 	public BlockLogicSnowyFlowerStackable(Block<T> block, int storedBlockID) {
-		super(block, 8, 0, true);
+		super(block, 8, 0, false);
 		block.setTicking(true);
 
 		this.storedBlockID = storedBlockID;

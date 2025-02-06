@@ -2,11 +2,15 @@ package net.helinos.moresnow.block;
 
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicLeavesBase;
+import net.minecraft.core.block.BlockLogicSlab;
+import net.minecraft.core.block.BlockLogicStairs;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
@@ -70,10 +74,10 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 	 * @see BlockLogicSnowyMultiple#canSupportSnow(Chunk, int, int, int)
 	 */
 	public boolean canSupportSnow(World world, int x, int y, int z) {
-		int belowID = world.getBlockId(x, y - 1, z);
-		Material belowMaterial = world.getBlockMaterial(x, y - 1, z);
+		Block<?> belowBlock = world.getBlock(x, y - 1, z);
+		int belowMetadata = world.getBlockMetadata(x, y - 1, z);
 
-		return this.canSupportSnow(belowID, belowMaterial);
+		return this.canSupportSnow(belowBlock, belowMetadata);
 	}
 
 	/**
@@ -83,20 +87,38 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 	 */
 	public boolean canSupportSnow(Chunk chunk, int x, int y, int z) {
 		int belowID = chunk.getBlockID(x, y - 1, z);
-		Material belowMaterial = chunk.world.getBlockMaterial(x, y, z);
+		int belowMetadata = chunk.getBlockMetadata(x, y - 1, z);
+		Block<?> belowBlock = Blocks.getBlock(belowID);
 
-		return this.canSupportSnow(belowID, belowMaterial);
+		return this.canSupportSnow(belowBlock, belowMetadata);
 	}
 
-	private boolean canSupportSnow(int belowID, Material belowMaterial) {
+	private boolean canSupportSnow(@Nullable Block<?> belowBlock, int metadata) {
 		if (this.supportsOwnSnow) {
 			return true;
+		} else if (belowBlock == null) {
+			return false;
 		}
+		
+		Material belowMaterial = belowBlock.getMaterial();
 
-		if (
-			belowID == 0 || 
-			belowID == Blocks.ICE.id() ||
-			(!Blocks.blocksList[belowID].isSolidRender() && !(Blocks.blocksList[belowID].getLogic() instanceof BlockLogicLeavesBase))
+		if (belowBlock.getLogic() instanceof BlockLogicSlab) {
+			int slabState = metadata & 3;
+
+			if (slabState != 0) {
+				return true;
+			}
+		} else if (belowBlock.getLogic() instanceof BlockLogicStairs) {
+			int stairsState = metadata & 8;
+
+			if (stairsState != 0) {
+				return true;
+			}
+		}
+		
+		if ( 
+			belowBlock == Blocks.ICE ||
+			(!belowBlock.isSolidRender() && !(belowBlock.getLogic() instanceof BlockLogicLeavesBase))
 		) {
 			return false;
 		} else {

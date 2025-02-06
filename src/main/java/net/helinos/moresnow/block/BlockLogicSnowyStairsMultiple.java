@@ -105,6 +105,7 @@ public class BlockLogicSnowyStairsMultiple<T extends BlockLogic, S extends Block
 	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
 		Block<?> blockAbove = world.getBlock(x, y + 1, z);
 		int metadata = world.getBlockMetadata(x, y, z);
+
 		if (blockAbove != null && blockAbove.getLogic() instanceof BlockLogicSnowyPartial) {
 			BlockLogicSnowyPartial<?> blockSnowyPartial = (BlockLogicSnowyPartial<?>) blockAbove.getLogic();
 			int aboveMetadata = world.getBlockMetadata(x, y + 1, z);
@@ -113,6 +114,8 @@ public class BlockLogicSnowyStairsMultiple<T extends BlockLogic, S extends Block
 			if (aboveLayers != this.getLayers(metadata)) {
 				world.setBlockMetadata(x, y, z, (metadata & 0b11111100) | aboveLayers - 1);
 			}
+		} else {
+			this.removeSnow(world, metadata, x, y, z);
 		}
 	}
 

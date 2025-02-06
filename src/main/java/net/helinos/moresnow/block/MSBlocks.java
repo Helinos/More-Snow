@@ -219,7 +219,6 @@ public class MSBlocks {
 
 		blockIds = new int[] {
 			SNOWY_PLANT.id(),
-			SNOWY_PARTIAL.id(),
 			SNOWY_SLAB.id(), 
 			SNOWY_SLAB_PAINTED.id(),
 			SNOWY_STAIRS_PAINTED.id(),

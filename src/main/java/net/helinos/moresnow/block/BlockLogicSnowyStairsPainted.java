@@ -1,8 +1,11 @@
 package net.helinos.moresnow.block;
 
+import java.util.ArrayList;
+
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.Blocks;
+import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.chunk.Chunk;
 
@@ -19,40 +22,45 @@ public class BlockLogicSnowyStairsPainted<T extends BlockLogic> extends BlockLog
 
 	@Override
 	public boolean tryMakeSnowy(World world, int id, int meta, int x, int y, int z) {
-		if (!this.canReplaceBlock(id, meta))
-			return false;
-		if (world.getBlockId(x, y + 1, z) == 0) {
-			world.setBlockAndMetadataWithNotify(x, y + 1, z, MSBlocks.SNOWY_PARTIAL.id(), meta << 2);
-		}
-		return world.setBlockAndMetadataWithNotify(x, y, z, this.id(), this.blockToMetadata(id, meta));
+		return BlockLogicSnowyStairsMultiple.tryMakeSnowyDo(this, world, id, meta, x, y, z);
 	}
 
 	@Override
 	public boolean tryMakeSnowy(Chunk chunk, int id, int meta, int x, int y, int z) {
-		if (!this.canReplaceBlock(id, meta))
-			return false;
-		if (chunk.getBlockID(x, y + 1, z) == 0) {
-			chunk.setBlockIDWithMetadata(x, y + 1, z, MSBlocks.SNOWY_PARTIAL.id(), meta << 2);
+		return BlockLogicSnowyStairsMultiple.tryMakeSnowyDo(this, chunk, id, meta, x, y, z);
+	}
+
+	@Override
+	public void accumulate(World world, int x, int y, int z) {
+		BlockLogicSnowyStairsMultiple.accumulateDo(world, x, y, z);
+		super.accumulate(world, x, y, z);
+	}
+
+	@Override
+	@SuppressWarnings(value = { "unchecked", "rawtypes" })
+	public void getCollidingBoundingBoxes(World world, int x, int y, int z, AABB aabb, ArrayList aabbList) {
+		int metadata = world.getBlockMetadata(x, y, z);
+		int rotation = this.getRotation(metadata);
+		int layers = this.getLayers(metadata);
+		double heightFromSnow = layers * 2 / 16.0;
+		if (rotation == 0) {
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 0.5, 0.5 + heightFromSnow, 1.0).move(x, y, z), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.5, 0.0, 0.0, 1.0, 1.0, 1.0).move(x, y, z), aabbList);
+		} else if (rotation == 1) {
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 0.5, 1.0, 1.0).move(x, y, z), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.5, 0.0, 0.0, 1.0, 0.5 + heightFromSnow, 1.0).move(x, y, z), aabbList);
+		} else if (rotation == 2) {
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, 0.5 + heightFromSnow, 0.5).move(x, y, z), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0).move(x, y, z), aabbList);
+		} else {
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.5).move(x, y, z), aabbList);
+			this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.5, 1.0, 0.5 + heightFromSnow, 1.0).move(x, y, z), aabbList);
 		}
-		return chunk.setBlockIDWithMetadata(x, y, z, this.block.id(), this.blockToMetadata(id, meta));
 	}
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
-		Block<?> blockAbove = world.getBlock(x, y + 1, z);
-		int metadata = world.getBlockMetadata(x, y, z);
-
-		if (blockAbove != null && blockAbove.getLogic() instanceof BlockLogicSnowyPartial) {
-			BlockLogicSnowyPartial<?> blockSnowyPartial = (BlockLogicSnowyPartial<?>) blockAbove.getLogic();
-			int aboveMetadata = world.getBlockMetadata(x, y + 1, z);
-			int aboveLayers = blockSnowyPartial.getLayers(aboveMetadata);
-
-			if (aboveLayers != this.getLayers(metadata)) {
-				world.setBlockMetadata(x, y, z, (metadata & 0b11111100) | aboveLayers - 1);
-			}
-		} else {
-			this.removeSnow(world, metadata, x, y, z);
-		}
+		BlockLogicSnowyStairsMultiple.onNeighborBlockChangeDo(this, world, x, y, z, blockId);
 	}
 
 	@Override

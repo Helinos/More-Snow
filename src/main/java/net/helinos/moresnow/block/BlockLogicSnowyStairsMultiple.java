@@ -49,34 +49,45 @@ public class BlockLogicSnowyStairsMultiple<T extends BlockLogic, S extends Block
 
 	@Override
 	public boolean tryMakeSnowy(World world, int id, int meta, int x, int y, int z) {
-		if (!this.canReplaceBlock(id, meta))
+		return tryMakeSnowyDo(this, world, id, meta, x, y, z);
+	}
+
+	public static boolean tryMakeSnowyDo(BlockLogicSnowy<?> logic, World world, int id, int meta, int x, int y, int z) {
+		if (!logic.canReplaceBlock(id, meta))
 			return false;
 		if (world.getBlockId(x, y + 1, z) == 0) {
 			world.setBlockAndMetadataWithNotify(x, y + 1, z, MSBlocks.SNOWY_PARTIAL.id(), meta << 2);
 		}
-		return world.setBlockAndMetadataWithNotify(x, y, z, this.id(), this.blockToMetadata(id, meta));
+		return world.setBlockAndMetadataWithNotify(x, y, z, logic.id(), logic.blockToMetadata(id, meta));
 	}
 
 	@Override
 	public boolean tryMakeSnowy(Chunk chunk, int id, int meta, int x, int y, int z) {
-		if (!this.canReplaceBlock(id, meta))
+		return tryMakeSnowyDo(this, chunk, id, meta, x, y, z);
+	}
+
+	public static boolean tryMakeSnowyDo(BlockLogicSnowy<?> logic, Chunk chunk, int id, int meta, int x, int y, int z) {
+		if (!logic.canReplaceBlock(id, meta))
 			return false;
 		if (chunk.getBlockID(x, y + 1, z) == 0) {
 			chunk.setBlockIDWithMetadata(x, y + 1, z, MSBlocks.SNOWY_PARTIAL.id(), meta << 2);
 		}
-		return chunk.setBlockIDWithMetadata(x, y, z, this.block.id(), this.blockToMetadata(id, meta));
+		return chunk.setBlockIDWithMetadata(x, y, z, logic.block.id(), logic.blockToMetadata(id, meta));
 	}
 
 	@Override
 	public void accumulate(World world, int x, int y, int z) {
+		accumulateDo(world, x, y, z);
+		super.accumulate(world, x, y, z);
+	}
+
+	public static void accumulateDo(World world, int x, int y, int z) {
 		int metadata = world.getBlockMetadata(x, y, z);
 		int blockIdAbove = world.getBlockId(x, y + 1, z);
 
 		if (blockIdAbove == 0) {
 			world.setBlockAndMetadata(x, y, z, MSBlocks.SNOWY_PARTIAL.id(), metadata & 0b1111);
-		}
-
-		super.accumulate(world, x, y, z);
+		}		
 	}
 
 	@Override
@@ -103,6 +114,10 @@ public class BlockLogicSnowyStairsMultiple<T extends BlockLogic, S extends Block
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
+		onNeighborBlockChangeDo(this, world, x, y, z, blockId);
+	}
+
+	public static void onNeighborBlockChangeDo(BlockLogicSnowy<?> logic, World world, int x, int y, int z, int blockId) {
 		Block<?> blockAbove = world.getBlock(x, y + 1, z);
 		int metadata = world.getBlockMetadata(x, y, z);
 
@@ -111,11 +126,11 @@ public class BlockLogicSnowyStairsMultiple<T extends BlockLogic, S extends Block
 			int aboveMetadata = world.getBlockMetadata(x, y + 1, z);
 			int aboveLayers = blockSnowyPartial.getLayers(aboveMetadata);
 
-			if (aboveLayers != this.getLayers(metadata)) {
+			if (aboveLayers != logic.getLayers(metadata)) {
 				world.setBlockMetadata(x, y, z, (metadata & 0b11111100) | aboveLayers - 1);
 			}
 		} else {
-			this.removeSnow(world, metadata, x, y, z);
+			logic.removeSnow(world, metadata, x, y, z);
 		}
 	}
 

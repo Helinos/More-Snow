@@ -315,4 +315,11 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 			this.removeSnow(world, metadata, x, y, z);
 		}
 	}
+
+	@Override
+	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
+		if (!this.canSupportSnow(world, x, y, z)) {
+			this.removeSnow(world, world.getBlockMetadata(x, y, z), x, y, z);
+		}
+	}
 }

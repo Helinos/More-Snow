@@ -20,13 +20,13 @@ public class BlockModelSnowySlab<T extends BlockLogic> extends BlockModelSnowy<T
         boolean somethingRendered = this.renderStandardBlock(tessellator, bounds, x, y, z);
 
         // Render the snow
-        renderBlocks.overrideBlockTexture = SNOW_TEXTURE;
+        this.renderingSnow = true;
         int layers = ((BlockLogicSnowy<?>) block.getLogic()).getLayers(metadata);
         double height = layers * 2 / 16.0;
 
         bounds.set(0.0, 0.5, 0.0, 1.0, 0.5 + height, 1.0);
         somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
-        renderBlocks.overrideBlockTexture = null;
+        this.renderingSnow = false;
 
         return somethingRendered;
     }

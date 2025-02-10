@@ -118,14 +118,14 @@ public class BlockModelSnowyFenceGate<T extends BlockLogic> extends BlockModelSn
             }
         }
 
-        renderBlocks.overrideBlockTexture = SNOW_TEXTURE;
+        this.renderingSnow = true;
 
         int layers = logic.getLayers(metadata);
         double height = layers * 2 / 16.0;
         bounds = AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, height, 1.0);
         somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
 
-        renderBlocks.overrideBlockTexture = null;
+        this.renderingSnow = false;
 
         return somethingRendered;
     }

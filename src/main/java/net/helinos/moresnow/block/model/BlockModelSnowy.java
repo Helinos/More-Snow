@@ -12,7 +12,8 @@ import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.WorldSource;
 
 public abstract class BlockModelSnowy<T extends BlockLogic> extends BlockModelStandard<T> {
-    public static final IconCoordinate SNOW_TEXTURE = TextureRegistry.getTexture("minecraft:block/block_snow");
+    private static final IconCoordinate SNOW_TEXTURE = TextureRegistry.getTexture("minecraft:block/block_snow");
+    protected boolean renderingSnow = false;
 
     public BlockModelSnowy(Block<T> block) {
         super(block);
@@ -20,6 +21,10 @@ public abstract class BlockModelSnowy<T extends BlockLogic> extends BlockModelSt
 
     @Override
     public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
+        if (this.renderingSnow) {
+            return SNOW_TEXTURE;
+        }
+        
         int metadata = blockAccess.getBlockMetadata(x, y, z);
         return this.getBlockTextureFromSideAndMetadata(side, metadata);
     }

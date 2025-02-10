@@ -1,5 +1,6 @@
 package net.helinos.moresnow.block;
 
+import net.helinos.moresnow.BlockInitEntrypoint;
 import net.helinos.moresnow.MoreSnow;
 import net.minecraft.core.sound.BlockSounds;
 import net.minecraft.core.util.helper.DyeColor;
@@ -25,7 +26,7 @@ import com.llamalad7.mixinextras.lib.apache.commons.ArrayUtils;
 import turniplabs.halplibe.helper.BlockBuilder;
 import turniplabs.halplibe.util.toml.Toml;
 
-public class MSBlocks {
+public class MSBlocks implements BlockInitEntrypoint {
 	public static Block<BlockLogicSnowyPlant<?, BlockLogicFlower>> SNOWY_PLANT;
 	public static ArrayList<Block<?>> SNOWY_FLOWER_STACKABLES = new ArrayList<>();
 	public static Block<?> SNOWY_SLAB;
@@ -48,7 +49,7 @@ public class MSBlocks {
 	private static Toml rawConfig;
 	private static boolean configChanged = false;
 
-	public static void init() {
+	public void afterBlockInit() {
 		MoreSnow.LOGGER.info("Initializing Blocks.");
 
 		rawConfig = MoreSnow.CONFIG.getRawParsed();

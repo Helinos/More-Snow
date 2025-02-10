@@ -8,20 +8,23 @@
     "Helinos"
   ],
   "contact": {
-    "homepage": "",
-    "sources": "https://github.com/Helinos/More-Snow"
+    "sources": "https://github.com/Helinos/More-Snow",
+    "issues": "https://github.com/Helinos/More-Snow/issues"
   },
   "license": "LGPL-3.0",
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "beforeClientStart": [
       "net.helinos.moresnow.MoreSnow"
     ],
     "afterBlockInit": [
-      "net.helinos.moresnow.MoreSnow"
+      "net.helinos.moresnow.block.MSBlocks"
     ],
     "initModels": [
       "net.helinos.moresnow.block.MSModels"
+    ],
+    "modmenu": [
+      "net.helinos.moresnow.impl.ModMenuApiImpl"
     ]
   },
   "mixins": [
@@ -30,7 +33,8 @@
   "depends": {
     "minecraft": "^7.3",
     "fabricloader": ">=0.15.5",
-    "halplibe": ">=5.1.2"
+    "halplibe": ">=5.1.2",
+    "modmenu": ">=3.0.0"
   },
   "suggests": {}
 }

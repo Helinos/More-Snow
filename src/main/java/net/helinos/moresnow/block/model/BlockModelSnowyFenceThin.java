@@ -176,14 +176,14 @@ public class BlockModelSnowyFenceThin<T extends BlockLogic, F extends BlockLogic
         }
 
         // Render snow
-        renderBlocks.overrideBlockTexture = SNOW_TEXTURE;
+        this.renderingSnow = true;
 
         int layers = logic.getLayers(metadata);
         double height = layers * 2 / 16.0;
         AABB bounds = AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, height, 1.0);
         somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
 
-        renderBlocks.overrideBlockTexture = null;
+        this.renderingSnow = false;
 
         return somethingRendered;
     }

@@ -45,7 +45,7 @@ public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy
         }
 
         // Render the snow
-        renderBlocks.overrideBlockTexture = BlockModelSnowy.SNOW_TEXTURE;
+        this.renderingSnow = true;
         int layers = logic.getLayers(metadata);
         double heightFromSnow = layers * 2 / 16.0;
 
@@ -63,7 +63,7 @@ public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy
             bounds.set(0.0, 0.5, 0.5, 1.0, 0.5 + heightFromSnow, 1.0);
             somethingRendered |= this.renderStandardBlock(tessellator, bounds, x, y, z);
         }
-        renderBlocks.overrideBlockTexture = null;
+        this.renderingSnow = false;
 
         return somethingRendered;
     }

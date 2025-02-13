@@ -48,14 +48,14 @@ public class MoreSnow implements ClientStartEntrypoint {
 
 	@Override
 	public void beforeClientStart() {
-		this.modSettings = new ModSettings();
+		// this.modSettings = new ModSettings();
 
-		MOD_OPTIONS = new OptionsPage(null, null)
-			.withComponent(
-				new OptionsCategory("gui.moresnow.options.category.ids")
-					.withComponent(new IntegerOptionComponent(this.modSettings.test))
-			)
-		;
+		// MOD_OPTIONS = new OptionsPage(null, null)
+		// 	.withComponent(
+		// 		new OptionsCategory("gui.moresnow.options.category.ids")
+		// 			.withComponent(new IntegerOptionComponent(this.modSettings.test))
+		// 	)
+		// ;
 	}
 
 	@Override

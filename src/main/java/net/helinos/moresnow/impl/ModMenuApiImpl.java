@@ -13,9 +13,9 @@ public class ModMenuApiImpl implements ModMenuApi {
         return MoreSnow.MOD_ID;
     }
 
-    @Override
-    public Function<Screen, ? extends Screen> getConfigScreenFactory() {
-        Function<Screen, ? extends Screen> screen = parent -> new ScreenModOptions(parent);
-        return screen;
-    }
+    // @Override
+    // public Function<Screen, ? extends Screen> getConfigScreenFactory() {
+    //     Function<Screen, ? extends Screen> screen = parent -> new ScreenModOptions(parent);
+    //     return screen;
+    // }
 }

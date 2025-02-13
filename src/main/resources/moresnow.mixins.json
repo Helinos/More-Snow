@@ -10,11 +10,7 @@
     "WeatherSnowMixin"
   ],
   "client": [
-    "BlockModelGrassMixin",
-    "MinecraftMixin"
-  ],
-  "server": [
-    "MinecraftServerMixin"
+    "BlockModelGrassMixin"
   ],
   "injectors": {
     "defaultRequire": 1

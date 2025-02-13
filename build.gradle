@@ -5,7 +5,7 @@ plugins {
 
 import org.gradle.internal.os.OperatingSystem
 
-project.ext.lwjglVersion = "3.3.4"
+project.ext.lwjglVersion = "3.3.3"
 
 switch (OperatingSystem.current()) {
 	case OperatingSystem.LINUX:
@@ -88,7 +88,8 @@ dependencies {
 	modRuntimeOnly "objects:client:43db9b498cb67058d2e12d394e6507722e71bb45" // https://piston-data.mojang.com/v1/objects/43db9b498cb67058d2e12d394e6507722e71bb45/client.jar
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	implementation("turniplabs:halplibe:${project.halplibe_version}")
+	//modImplementation("turniplabs:halplibe:${project.halplibe_version}")
+	modImplementation(files("lib/halplibe-5.2.0.jar"))
 
 	modImplementation("turniplabs:modmenu-bta:${project.mod_menu_version}")
 
@@ -104,7 +105,7 @@ dependencies {
 
 	include(implementation("org.apache.commons:commons-lang3:3.12.0"))
 
-	modImplementation("com.github.zarzelcow:legacy-lwjgl3:1.0.4")
+	modImplementation("com.github.Better-than-Adventure:legacy-lwjgl3:1.0.5")
 	implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
 	runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"

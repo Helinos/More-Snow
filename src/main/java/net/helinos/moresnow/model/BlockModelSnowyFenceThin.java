@@ -1,4 +1,4 @@
-package net.helinos.moresnow.block.model;
+package net.helinos.moresnow.model;
 
 import net.helinos.moresnow.block.BlockLogicSnowyFenceThin;
 import net.minecraft.client.render.LightmapHelper;
@@ -52,7 +52,7 @@ public class BlockModelSnowyFenceThin<T extends BlockLogic, F extends BlockLogic
                brightnessNorthSouth *= 0.8F;
                brightnessEastWest *= 0.6F;
             }
-            
+
             if (logic.shouldDrawColumn(renderBlocks.blockAccess, x, y, z)) {
                 double onePixel = 1.0 / 16.0;
 
@@ -77,7 +77,7 @@ public class BlockModelSnowyFenceThin<T extends BlockLogic, F extends BlockLogic
                 tessellator.addVertexWithUV(maxX, minY, maxZ, maxU, maxV);
                 tessellator.addVertexWithUV(maxX, maxY, maxZ, maxU, minV);
                 tessellator.addVertexWithUV(minX, maxY, maxZ, minU, minV);
-                
+
                 tessellator.setColorOpaque_F(brightnessEastWest, brightnessEastWest, brightnessEastWest);
                 tessellator.addVertexWithUV(maxX, minY, maxZ, minU, maxV);
                 tessellator.addVertexWithUV(maxX, minY, minZ, maxU, maxV);
@@ -98,7 +98,7 @@ public class BlockModelSnowyFenceThin<T extends BlockLogic, F extends BlockLogic
                 tessellator.addVertexWithUV(maxX, maxY, maxZ, maxU, maxV);
                 tessellator.addVertexWithUV(maxX, maxY, minZ, maxU, minV);
                 tessellator.addVertexWithUV(minX, maxY, minZ, minU, minV);
-                
+
                 tessellator.setColorOpaque_F(brightnessBottom, brightnessBottom, brightnessBottom);
                 tessellator.addVertexWithUV(minX, minY, minZ, minU, minV);
                 tessellator.addVertexWithUV(maxX, minY, minZ, maxU, minV);
@@ -110,7 +110,7 @@ public class BlockModelSnowyFenceThin<T extends BlockLogic, F extends BlockLogic
                 if (!logic.canConnectTo(renderBlocks.blockAccess, x + direction.getOffsetX(), y, z + direction.getOffsetZ())) {
                     continue;
                 }
-                
+
                 boolean northOrSouth = direction == Direction.NORTH || direction == Direction.SOUTH;
                 boolean northOrWest = direction == Direction.NORTH || direction == Direction.WEST;
                 boolean southOrEast = direction == Direction.SOUTH || direction == Direction.EAST;
@@ -151,7 +151,7 @@ public class BlockModelSnowyFenceThin<T extends BlockLogic, F extends BlockLogic
                     maxU = northOrWest ? this.normalTexture.getSubIconU(0.5) : this.normalTexture.getIconUMax();
                     maxV = this.normalTexture.getIconVMax();
                 }
-        
+
                 double centerX = direction == Direction.WEST ? x : x + 0.5;
                 double minY = y;
                 double centerZ = direction == Direction.NORTH ? z : z + 0.5;

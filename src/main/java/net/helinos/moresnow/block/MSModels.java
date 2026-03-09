@@ -1,11 +1,11 @@
 package net.helinos.moresnow.block;
 
-import net.helinos.moresnow.block.model.BlockModelSnowyFence;
-import net.helinos.moresnow.block.model.BlockModelSnowyFenceGate;
-import net.helinos.moresnow.block.model.BlockModelSnowyFenceThin;
-import net.helinos.moresnow.block.model.BlockModelSnowyPlant;
-import net.helinos.moresnow.block.model.BlockModelSnowySlab;
-import net.helinos.moresnow.block.model.BlockModelSnowyStairs;
+import net.helinos.moresnow.model.BlockModelSnowyFence;
+import net.helinos.moresnow.model.BlockModelSnowyFenceGate;
+import net.helinos.moresnow.model.BlockModelSnowyFenceThin;
+import net.helinos.moresnow.model.BlockModelSnowyPlant;
+import net.helinos.moresnow.model.BlockModelSnowySlab;
+import net.helinos.moresnow.model.BlockModelSnowyStairs;
 import net.minecraft.client.render.EntityRenderDispatcher;
 import net.minecraft.client.render.TileEntityRenderDispatcher;
 import net.minecraft.client.render.block.color.BlockColorDispatcher;
@@ -22,14 +22,14 @@ public class MSModels implements ModelEntrypoint {
     @Override
 	public void initBlockModels(BlockModelDispatcher dispatcher) {
         ModelHelper.setBlockModel(MSBlocks.SNOWY_PLANT, () -> new BlockModelSnowyPlant<>(MSBlocks.SNOWY_PLANT).setAllTextures(0, "minecraft:block/block_snow"));
-        
+
         for (Block<?> block : MSBlocks.SNOWY_FLOWER_STACKABLES) {
             ModelHelper.setBlockModel(block, () -> new BlockModelSnowyPlant<>(block).setAllTextures(0, "minecraft:block/block_snow"));
         }
-        
+
         ModelHelper.setBlockModel(MSBlocks.SNOWY_SLAB, () -> new BlockModelSnowySlab<>(MSBlocks.SNOWY_SLAB).setAllTextures(0, "minecraft:block/block_snow"));
         ModelHelper.setBlockModel(MSBlocks.SNOWY_SLAB_PAINTED, () -> new BlockModelSnowySlab<>(MSBlocks.SNOWY_SLAB_PAINTED).setAllTextures(0, "minecraft:block/block_snow"));
-    
+
         for (Block<?> block : MSBlocks.SNOWY_STAIRS) {
             ModelHelper.setBlockModel(block, () -> new BlockModelSnowyStairs<>(block).setAllTextures(0, "minecraft:block/block_snow"));
         }
@@ -38,9 +38,9 @@ public class MSModels implements ModelEntrypoint {
         ModelHelper.setBlockModel(MSBlocks.SNOWY_PARTIAL, () -> new BlockModelStandard<>(MSBlocks.SNOWY_PARTIAL).setAllTextures(0, "minecraft:block/block_snow"));
         ModelHelper.setBlockModel(MSBlocks.SNOWY_FENCE, () -> new BlockModelSnowyFence<>(MSBlocks.SNOWY_FENCE).setAllTextures(0, "minecraft:block/block_snow"));
         ModelHelper.setBlockModel(MSBlocks.SNOWY_FENCE_PAINTED, () -> new BlockModelSnowyFence<>(MSBlocks.SNOWY_FENCE_PAINTED).setAllTextures(0, "minecraft:block/block_snow"));
-        
+
         ModelHelper.setBlockModel(
-            MSBlocks.SNOWY_FENCE_WALLPAPER, 
+            MSBlocks.SNOWY_FENCE_WALLPAPER,
             () -> new BlockModelSnowyFenceThin<>(
                 MSBlocks.SNOWY_FENCE_WALLPAPER,
                 Blocks.FENCE_PAPER_WALL.getLogic().getClass(),
@@ -51,7 +51,7 @@ public class MSModels implements ModelEntrypoint {
             ).setAllTextures(0, "minecraft:block/block_snow"));
 
         ModelHelper.setBlockModel(
-            MSBlocks.SNOWY_FENCE_STEEL, 
+            MSBlocks.SNOWY_FENCE_STEEL,
             () -> new BlockModelSnowyFenceThin<>(
                 MSBlocks.SNOWY_FENCE_STEEL,
                 Blocks.FENCE_STEEL.getLogic().getClass(),
@@ -62,7 +62,7 @@ public class MSModels implements ModelEntrypoint {
             ).setAllTextures(0, "minecraft:block/block_snow"));
 
         ModelHelper.setBlockModel(
-            MSBlocks.SNOWY_FENCE_CHAINLINK, 
+            MSBlocks.SNOWY_FENCE_CHAINLINK,
             () -> new BlockModelSnowyFenceThin<>(
                 MSBlocks.SNOWY_FENCE_CHAINLINK,
                 Blocks.FENCE_CHAINLINK.getLogic().getClass(),
@@ -73,7 +73,7 @@ public class MSModels implements ModelEntrypoint {
             ).setAllTextures(0, "minecraft:block/block_snow"));
 
         ModelHelper.setBlockModel(MSBlocks.SNOWY_FENCE_GATE, () -> new BlockModelSnowyFenceGate<>(MSBlocks.SNOWY_FENCE_GATE).setAllTextures(0, "minecraft:block/block_snow"));
-    
+
         for (Block<?> block : MSBlocks.SNOWY_FENCE_GATES_PAINTED) {
             ModelHelper.setBlockModel(block, () -> new BlockModelSnowyFenceGate<>(block).setAllTextures(0, "minecraft:block/block_snow"));
         }

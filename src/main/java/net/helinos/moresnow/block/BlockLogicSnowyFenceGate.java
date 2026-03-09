@@ -2,8 +2,6 @@ package net.helinos.moresnow.block;
 
 import java.util.ArrayList;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.Blocks;
@@ -18,15 +16,16 @@ import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockLogicSnowyFenceGate<T extends BlockLogic> extends BlockLogicSnowy<T> {
     private final boolean isPainted;
     private final DyeColor color;
-    
+
     public BlockLogicSnowyFenceGate(Block<T> block, @Nullable DyeColor color) {
         super(block, 8, 0, false);
         this.setBlockBounds(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
-        
+
         this.isPainted = color != null;
         this.color = color;
     }
@@ -39,7 +38,7 @@ public class BlockLogicSnowyFenceGate<T extends BlockLogic> extends BlockLogicSn
         double height = layers * 2 / 16.0;
 
         this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.0, 0.0, 1.0, height, 1.0).move(x, y, z), aabbList);
-        
+
         if (!this.isOpen(metadata)) {
             if (this.getDirection(metadata) != 3 && this.getDirection(metadata) != 1) {
                 this.addIntersectingBoundingBox(aabb, AABB.getTemporaryBB(0.0, 0.25, 0.375, 1.0, 1.50, 0.625).move(x, y, z), aabbList);
@@ -99,7 +98,7 @@ public class BlockLogicSnowyFenceGate<T extends BlockLogic> extends BlockLogicSn
 
     @Override
     public int getStoredBlockId(int metadata) {
-        if (this.isPainted) {
+        if (this.isPainted && DyeColor.colorFromBlockMeta(metadata >> 4) == this.color ) {
             return Blocks.FENCE_GATE_PLANKS_OAK_PAINTED.id();
         }
 
@@ -115,7 +114,7 @@ public class BlockLogicSnowyFenceGate<T extends BlockLogic> extends BlockLogicSn
     public boolean isSolidRender() {
         return false;
     }
-  
+
     @Override
     public boolean isCubeShaped() {
         return false;
@@ -124,7 +123,7 @@ public class BlockLogicSnowyFenceGate<T extends BlockLogic> extends BlockLogicSn
     public boolean isOpen(int metadata) {
         return ((metadata >> 5) & 1) == 1;
     }
-  
+
     public int getDirection(int metadata) {
         return (metadata >> 3) & 0b11;
     }

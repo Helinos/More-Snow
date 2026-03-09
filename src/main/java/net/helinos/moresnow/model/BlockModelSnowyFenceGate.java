@@ -1,4 +1,4 @@
-package net.helinos.moresnow.block.model;
+package net.helinos.moresnow.model;
 
 import net.helinos.moresnow.block.BlockLogicSnowyFenceGate;
 import net.minecraft.client.render.tessellator.Tessellator;

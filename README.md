@@ -1,5 +1,10 @@
 # More Snow
 
+### Bugs
+A small list of known bugs so I wont forgett them.
+- If you put fence in the air, the block on the bottom it will create a fence with snow in it.
+and it can cause to expand downward to bedrock even. (see discord)
+
 Adds more snow to BTA. 
 Inspired by [Snow! Real Magic!](https://github.com/Snownee/SnowRealMagic).
 

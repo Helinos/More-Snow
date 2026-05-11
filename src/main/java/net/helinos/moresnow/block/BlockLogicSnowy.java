@@ -2,8 +2,6 @@ package net.helinos.moresnow.block;
 
 import java.util.Random;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.core.block.Block;
@@ -23,6 +21,7 @@ import net.minecraft.core.item.Items;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.chunk.Chunk;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
     private final int maxLayers;
@@ -31,7 +30,7 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 
     public BlockLogicSnowy(Block<T> block, int maxLayers, int lowestLayerHeight, boolean supportsOwnSnow) {
         super(block, Material.snow);
-        
+
 		this.maxLayers = maxLayers;
         this.lowestLayerHeight = lowestLayerHeight;
         this.supportsOwnSnow = supportsOwnSnow;
@@ -70,7 +69,7 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 
     /**
 	 * Check if the block can support having snow on it.
-	 * 
+	 *
 	 * @see BlockLogicSnowyMultiple#canSupportSnow(Chunk, int, int, int)
 	 */
 	public boolean canSupportSnow(World world, int x, int y, int z) {
@@ -82,7 +81,7 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 
 	/**
 	 * Check if the block can support having snow on it.
-	 * 
+	 *
 	 * @see BlockSnowy$canSupportSnow(World, int, int, int)
 	 */
 	public boolean canSupportSnow(Chunk chunk, int x, int y, int z) {
@@ -99,7 +98,7 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 		} else if (belowBlock == null) {
 			return false;
 		}
-		
+
 		Material belowMaterial = belowBlock.getMaterial();
 
 		if (belowBlock.getLogic() instanceof BlockLogicSlab) {
@@ -115,8 +114,8 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 				return true;
 			}
 		}
-		
-		if ( 
+
+		if (
 			belowBlock == Blocks.ICE ||
 			(!belowBlock.isSolidRender() && !(belowBlock.getLogic() instanceof BlockLogicLeavesBase))
 		) {
@@ -293,7 +292,7 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -305,8 +304,8 @@ public abstract class BlockLogicSnowy<T extends BlockLogic> extends BlockLogic {
 			this.removeSnow(world, metadata, x, y, z);
 		}
 		if (
-			world.getBlockBiome(x, y, z) != null && 
-			!world.getBlockBiome(x, y, z).hasSurfaceSnow() && 
+			world.getBlockBiome(x, y, z) != null &&
+			!world.getBlockBiome(x, y, z).hasSurfaceSnow() &&
 			world.seasonManager.getCurrentSeason() != null &&
 			world.seasonManager.getCurrentSeason().letWeatherCleanUpSnow
 		) {

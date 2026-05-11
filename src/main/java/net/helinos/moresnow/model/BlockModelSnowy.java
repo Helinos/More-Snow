@@ -1,4 +1,4 @@
-package net.helinos.moresnow.block.model;
+package net.helinos.moresnow.model;
 
 import net.helinos.moresnow.block.BlockLogicSnowy;
 import net.minecraft.client.render.block.model.BlockModelDispatcher;
@@ -24,7 +24,7 @@ public abstract class BlockModelSnowy<T extends BlockLogic> extends BlockModelSt
         if (this.renderingSnow) {
             return SNOW_TEXTURE;
         }
-        
+
         int metadata = blockAccess.getBlockMetadata(x, y, z);
         return this.getBlockTextureFromSideAndMetadata(side, metadata);
     }

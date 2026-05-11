@@ -1,4 +1,4 @@
-package net.helinos.moresnow.block.model;
+package net.helinos.moresnow.model;
 
 import net.helinos.moresnow.block.BlockLogicSnowy;
 import net.helinos.moresnow.block.IBlockLogicSnowyRotation;
@@ -7,7 +7,7 @@ import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.util.phys.AABB;
 
-public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy<T> {   
+public class BlockModelSnowyStairs<T extends BlockLogic> extends BlockModelSnowy<T> {
     public BlockModelSnowyStairs(Block<T> block) {
         super(block);
     }
